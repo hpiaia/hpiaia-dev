@@ -8,26 +8,26 @@ export default function Content() {
 
   return (
     <div
-      className={`text-xl h-full uppercase bg-black lg:text-3xl text-stone-400 font-vcr cursor-default ${
+      className={`text-xl h-full uppercase lg:text-3xl rounded-lg text-stone-400 font-vcr cursor-default ${
         loading ? "loading-channel" : ""
       }`}
     >
-      <div className="tv h-full">
+      <div className="tv h-full rounded-lg">
         <div className="fixed inset-0 text-white pointer-events-none">
-          {channel === -1 && !loading && <Webcam className="object-cover w-full h-full" mirrored />}
+          {channel === -1 && !loading && <Webcam className="object-cover w-full h-full rounded-lg" mirrored />}
           {channel > 0 && !loading && (
-            <video className="object-cover w-full h-full" key={channel} playsInline loop autoPlay>
+            <video className="object-cover w-full h-full rounded-lg" key={channel} playsInline loop autoPlay>
               <source src={`/videos/channel-${channel.toString().padStart(2, "0")}.mp4`} type="video/mp4" />
             </video>
           )}
         </div>
 
-        <div className="absolute inset-0 --decontrast" />
-        <div className="absolute inset-0 --static" />
-        <div className="absolute inset-0 --artifacts" />
-        <div className="absolute inset-0 --vignette" />
+        <div className="absolute inset-0 rounded-lg --decontrast" />
+        <div className="absolute inset-0 rounded-lg --static" />
+        <div className="absolute inset-0 rounded-lg --artifacts" />
+        <div className="absolute inset-0 rounded-lg --vignette" />
 
-        <div className="relative bg-black bg-opacity-40 h-full">
+        <div className="relative bg-black rounded-lg bg-opacity-40 h-full">
           <div className="container overflow-scroll py-24 px-6 pb-48 mx-auto h-full md:px-12 lg:px-24 xl:px-32 scroll-m-0">
             <header className="flex justify-between">
               <nav>

@@ -41,10 +41,5 @@ export function useChannels(startAt = 0) {
     return () => clearTimeout(timeout);
   }, [channel]);
 
-  return {
-    channel,
-    loading,
-    prev,
-    next,
-  };
+  return { channel, loading, prev, next };
 }

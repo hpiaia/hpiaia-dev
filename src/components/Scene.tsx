@@ -12,19 +12,19 @@ export default function Scene({ children }: Props) {
     <Canvas className="touch-none">
       <color attach="background" args={["#0a0a0a"]} />
 
-      <PresentationControls global polar={[-0.4, 0.4]} azimuth={[-1, 1]}>
+      <PresentationControls global polar={[-0.2, 0.2]} azimuth={[-0.2, 0.2]}>
         <Float>
           <Center>
             <primitive object={model.scene} scale={10} rotation={[0, Math.PI, 0]}>
-              <Html transform scale={0.1} distanceFactor={1} position={[0, 0.27, -36.571]} rotation={[0, Math.PI, 0]}>
-                <div className="w-[1610px] h-[1250px] border-none">{children}</div>
+              <Html transform scale={0.1} distanceFactor={1} position={[0, 0.271, -36.571]} rotation={[0, Math.PI, 0]}>
+                <div className="w-[1610px] h-[1260px] rounded-lg">{children}</div>
               </Html>
             </primitive>
           </Center>
         </Float>
       </PresentationControls>
 
-      <Environment preset="warehouse" />
+      <Environment preset="apartment" />
       <ContactShadows position-y={-3.4} scale={5} blur={3} />
     </Canvas>
   );
