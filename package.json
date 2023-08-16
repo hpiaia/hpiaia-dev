@@ -13,10 +13,12 @@
     "@react-three/drei": "^9.80.2",
     "@react-three/fiber": "^8.13.6",
     "@types/three": "^0.155.0",
+    "clsx": "^2.0.0",
+    "powerglitch": "^2.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-powerglitch": "^1.0.0",
     "react-webcam": "^7.1.1",
+    "tailwind-merge": "^1.14.0",
     "three": "^0.155.0"
   },
   "devDependencies": {

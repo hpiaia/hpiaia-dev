@@ -2,15 +2,22 @@ import Webcam from "react-webcam";
 
 import { TextLink } from "./TextLink";
 import { useChannels } from "../lib/channels";
+import { cn } from "../lib/cn";
 
-export default function Content() {
+type Props = {
+  tvMode?: boolean;
+  toggleTvMode?: () => void;
+};
+
+export default function Content({ tvMode = false, toggleTvMode }: Props) {
   const { channel, loading, next, prev } = useChannels();
 
   return (
     <div
-      className={`text-xl h-full uppercase lg:text-3xl rounded-lg text-stone-400 font-vcr cursor-default ${
-        loading ? "loading-channel" : ""
-      }`}
+      className={cn("text-xl h-full uppercase lg:text-3xl rounded-lg text-stone-400 font-vcr", {
+        "loading-channel": loading,
+        "select-none": tvMode,
+      })}
     >
       <div className="tv h-full rounded-lg">
         <div className="fixed inset-0 text-white pointer-events-none">
@@ -43,19 +50,18 @@ export default function Content() {
               <div>
                 <span className="block text-base text-center sm:text-3xl">{new Date().toDateString()}</span>
                 <div className="flex justify-between items-center mt-2 lg:mt-4">
-                  <button className="cursor-pointer" onClick={prev}>
-                    ◄
-                  </button>
+                  <button onClick={prev}>◄</button>
                   <span className="text-base text-center sm:text-3xl">
                     CHANNEL {channel === -1 ? "AV" : channel.toString().padStart(2, "0")}
                   </span>
-                  <button className="cursor-pointer" onClick={next}>
-                    ►
-                  </button>
+                  <button onClick={next}>►</button>
                 </div>
-                <span className="hidden mt-2 text-lg text-center text-red-400 sm:block lg:mt-4">
-                  Try to change the channel!
-                </span>
+                <button
+                  className="hidden mt-2 text-lg text-center text-red-400 sm:block lg:mt-4 w-full"
+                  onClick={toggleTvMode}
+                >
+                  {tvMode ? "NORMAL MODE" : "TV MODE"}
+                </button>
               </div>
             </header>
 
