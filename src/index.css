@@ -14,8 +14,8 @@
 }
 
 ::selection {
-  background-color: white;
   color: black;
+  background-color: white;
 }
 
 @keyframes turn-on-filter {
@@ -76,7 +76,7 @@ body,
 }
 
 .loading-channel {
-  @apply brightness-200 saturate-50 contrast-150;
+  @apply brightness-200;
 }
 
 .loading-channel .--static,

@@ -5,21 +5,21 @@ import { useChannels } from "../lib/channels";
 import { cn } from "../lib/cn";
 
 type Props = {
-  tvMode?: boolean;
-  toggleTvMode?: () => void;
+  tv?: boolean;
+  toggleTv?: () => void;
 };
 
-export default function Content({ tvMode = false, toggleTvMode }: Props) {
+export default function Content({ tv = false, toggleTv }: Props) {
   const { channel, loading, next, prev } = useChannels();
 
   return (
     <div
       className={cn("text-xl h-full uppercase lg:text-3xl rounded-lg text-stone-400 font-vcr", {
         "loading-channel": loading,
-        "select-none": tvMode,
+        "select-none": tv,
       })}
     >
-      <div className="tv h-full rounded-lg">
+      <div className="h-full rounded-lg tv">
         <div className="fixed inset-0 text-white pointer-events-none">
           {channel === -1 && !loading && <Webcam className="object-cover w-full h-full rounded-lg" mirrored />}
           {channel > 0 && !loading && (
@@ -34,8 +34,8 @@ export default function Content({ tvMode = false, toggleTvMode }: Props) {
         <div className="absolute inset-0 rounded-lg --artifacts" />
         <div className="absolute inset-0 rounded-lg --vignette" />
 
-        <div className="relative bg-black rounded-lg bg-opacity-40 h-full">
-          <div className="container overflow-scroll py-24 px-6 pb-48 mx-auto h-full md:px-12 lg:px-24 xl:px-32 scroll-m-0">
+        <div className="relative h-full bg-black rounded-lg bg-opacity-40">
+          <div className="container h-full px-6 py-24 pb-48 mx-auto overflow-scroll md:px-12 lg:px-24 xl:px-32 scroll-m-0">
             <header className="flex justify-between">
               <nav>
                 <span>HP ►</span>
@@ -49,7 +49,7 @@ export default function Content({ tvMode = false, toggleTvMode }: Props) {
 
               <div>
                 <span className="block text-base text-center sm:text-3xl">{new Date().toDateString()}</span>
-                <div className="flex justify-between items-center mt-2 lg:mt-4">
+                <div className="flex items-center justify-between mt-2 lg:mt-4">
                   <button onClick={prev}>◄</button>
                   <span className="text-base text-center sm:text-3xl">
                     CHANNEL {channel === -1 ? "AV" : channel.toString().padStart(2, "0")}
@@ -57,10 +57,10 @@ export default function Content({ tvMode = false, toggleTvMode }: Props) {
                   <button onClick={next}>►</button>
                 </div>
                 <button
-                  className="hidden mt-2 text-lg text-center text-red-400 sm:block lg:mt-4 w-full"
-                  onClick={toggleTvMode}
+                  className="hidden w-full mt-2 text-lg text-center text-red-400 sm:block lg:mt-4"
+                  onClick={toggleTv}
                 >
-                  {tvMode ? "NORMAL MODE" : "TV MODE"}
+                  {tv ? "NORMAL MODE" : "TV MODE"}
                 </button>
               </div>
             </header>
@@ -85,7 +85,7 @@ export default function Content({ tvMode = false, toggleTvMode }: Props) {
               </p>
             </main>
 
-            <footer className="flex flex-col space-y-1 w-48 lg:space-y-2">
+            <footer className="flex flex-col w-48 space-y-1 lg:space-y-2">
               <TextLink href="https://github.com/hpiaia">GITHUB</TextLink>
               <TextLink href="https://twitter.com/hpiaiadev">TWITTER</TextLink>
               <TextLink href="mailto:betopiaia@gmail.com">EMAIL</TextLink>
