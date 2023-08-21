@@ -71,7 +71,7 @@ export default function Content({ tv = false, toggleTv }: Props) {
                 advanced knowledge of Typescript and PHP, as well as extensive experience with React and Node.
               </p>
 
-              <p className="mt-12">Over the past year, I have also been learning Elixir and Rust.</p>
+              <p className="mt-12">Over the past year, I have also been learning Elixir and Go.</p>
 
               <p className="mt-12">
                 I&apos;m a very thoughtful and curious person, who&apos;s passionate about&nbsp;
