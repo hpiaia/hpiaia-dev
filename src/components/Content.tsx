@@ -68,10 +68,10 @@ export default function Content({ tv = false, toggleTv }: Props) {
             <main className="py-24 text-3xl md:py-32 lg:text-6xl lg:leading-snug lg:py-42">
               <p>
                 Hi! I&apos;m <span className="text-white">Humberto Piaia</span>, a brazilian full stack engineer with
-                advanced knowledge of Typescript and PHP, as well as extensive experience with React and Node.
+                advanced knowledge of Typescript and C#, as well as extensive experience with Node and React.
               </p>
 
-              <p className="mt-12">Over the past year, I have also been learning Elixir and Go.</p>
+              <p className="mt-12">Over the past year, I have also been learning Elixir and Rust.</p>
 
               <p className="mt-12">
                 I&apos;m a very thoughtful and curious person, who&apos;s passionate about&nbsp;
