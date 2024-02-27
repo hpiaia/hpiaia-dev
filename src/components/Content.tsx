@@ -39,9 +39,7 @@ export default function Content({ tv = false }: { tv?: boolean }) {
               <nav>
                 <span>HP ►</span>
                 <div className="flex flex-col mt-2 space-y-1 lg:mt-4 lg:space-y-2">
-                  <GlitchLink href="https://hpiaia.notion.site/HUMBERTO-PIAIA-1401039c092a405d98d923913b8f7c73?pvs=4">
-                    RESUME
-                  </GlitchLink>
+                  <GlitchLink href="/resume.pdf">RESUME</GlitchLink>
                   <GlitchLink href="https://linkedin.com/in/hpiaia">LINKEDIN</GlitchLink>
                 </div>
               </nav>
