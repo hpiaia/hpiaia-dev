@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "VCR OSD Mono";
+  src:
+    url("/fonts/VCROSDMono.woff2") format("woff2"),
+    url("/fonts/VCROSDMono.woff") format("woff");
+}
+
+@keyframes turn-on-filter {
+  0% {
+    filter: brightness(1) invert(1) saturate(1.2);
+  }
+
+  5% {
+    filter: brightness(4) invert(1) saturate(2);
+  }
+
+  15% {
+    filter: brightness(4) invert(0) saturate(2);
+  }
+
+  30%,
+  50% {
+    filter: brightness(10) invert(0) saturate(1);
+  }
+
+  70% {
+    filter: contrast(1) brightness(1) invert(0) saturate(1);
+  }
+}
+
+html,
+body,
+#root {
+  @apply h-full;
+}
+
+.font-vcr {
+  text-shadow:
+    4px 3px 0 rgba(0, 180, 180, 0.4),
+    -4px -3px 0 rgba(180, 0, 0, 0.4);
+}
+
+.tv {
+  animation: turn-on-filter 1s;
+}
+
+.--decontrast {
+  @apply bg-white opacity-20;
+}
+
+.--static {
+  @apply bg-cover opacity-10 bg-static;
+}
+
+.--artifacts {
+  @apply bg-cover opacity-40 bg-artifacts;
+}
+
+.--vignette {
+  @apply bg-cover;
+  background: radial-gradient(circle, transparent 60%, black), transparent;
+}
+
+.loading-channel {
+  @apply brightness-200;
+}
+
+.loading-channel .--static,
+.loading-channel .--vignette,
+.loading-channel .--artifacts {
+  @apply opacity-30;
+}

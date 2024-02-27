@@ -1,0 +1,12 @@
+* {
+  scrollbar-width: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+::selection {
+  color: black;
+  background-color: white;
+}
