@@ -1,5 +1,6 @@
 import "./app.css";
 
+import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,10 +8,15 @@ export const metadata: Metadata = {
   description: "I'm Humberto Piaia, a Brazilian full stack engineer!",
 };
 
-export default function RootLayout({ children }: Readonly<React.PropsWithChildren>) {
+export default function RootLayout({
+  children,
+}: Readonly<React.PropsWithChildren>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
