@@ -2,52 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+/* VCR OSD Mono font */
 @font-face {
-  font-family: "VCR OSD Mono";
+  font-family: 'VCR OSD Mono';
   src:
-    url("/fonts/VCROSDMono.woff2") format("woff2"),
-    url("/fonts/VCROSDMono.woff") format("woff");
+    url('/fonts/VCROSDMono.woff2') format('woff2'),
+    url('/fonts/VCROSDMono.woff') format('woff');
 }
 
+/* TV turn on animation */
 @keyframes turn-on-filter {
   0% {
     filter: brightness(1) invert(1) saturate(1.2);
   }
-
   5% {
     filter: brightness(4) invert(1) saturate(2);
   }
-
   15% {
     filter: brightness(4) invert(0) saturate(2);
   }
-
   30%,
   50% {
     filter: brightness(10) invert(0) saturate(1);
   }
-
   70% {
     filter: contrast(1) brightness(1) invert(0) saturate(1);
   }
 }
 
+/* Base styles */
 html,
 body,
 #root {
   @apply h-full;
 }
 
+/* Text effects */
 .font-vcr {
   text-shadow:
     4px 3px 0 rgba(0, 180, 180, 0.4),
     -4px -3px 0 rgba(180, 0, 0, 0.4);
 }
 
+/* TV effects */
 .tv {
   animation: turn-on-filter 1s;
 }
 
+/* TV overlay effects */
 .--decontrast {
   @apply bg-white opacity-20;
 }
@@ -65,6 +67,7 @@ body,
   background: radial-gradient(circle, transparent 60%, black), transparent;
 }
 
+/* Loading channel state */
 .loading-channel {
   @apply brightness-200;
 }

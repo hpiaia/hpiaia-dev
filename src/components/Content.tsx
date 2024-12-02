@@ -1,20 +1,20 @@
-"use client";
+'use client'
 
-import Webcam from "react-webcam";
+import Link from 'next/link'
+import Webcam from 'react-webcam'
 
-import { useChannels } from "@/lib/channels";
-import { cn } from "@/lib/cn";
-import { GlitchLink } from "@/components/GlitchLink";
-import Link from "next/link";
+import { useChannels } from '@/lib/channels'
+import { cn } from '@/lib/cn'
+import { GlitchLink } from '@/components/GlitchLink'
 
 export default function Content({ tv = false }: { tv?: boolean }) {
-  const { channel, loading, next, prev } = useChannels();
+  const { channel, loading, next, prev } = useChannels()
 
   return (
     <div
-      className={cn("text-xl h-full uppercase lg:text-3xl text-stone-400 font-vcr bg-[#0A0A0A]", {
-        "loading-channel": loading,
-        "select-none rounded-lg": tv,
+      className={cn('text-xl h-full uppercase lg:text-3xl text-stone-400 font-vcr bg-[#0A0A0A]', {
+        'loading-channel': loading,
+        'select-none rounded-lg': tv,
       })}
     >
       <div className="h-full rounded-lg tv">
@@ -23,7 +23,7 @@ export default function Content({ tv = false }: { tv?: boolean }) {
 
           {channel > 0 && !loading && (
             <video className="object-cover w-full h-full rounded-lg" key={channel} playsInline loop autoPlay>
-              <source src={`/videos/channel-${channel.toString().padStart(2, "0")}.mp4`} type="video/mp4" />
+              <source src={`/videos/channel-${channel.toString().padStart(2, '0')}.mp4`} type="video/mp4" />
             </video>
           )}
         </div>
@@ -49,36 +49,38 @@ export default function Content({ tv = false }: { tv?: boolean }) {
                 <div className="flex items-center justify-between mt-2 lg:mt-4">
                   <button onClick={prev}>◄</button>
                   <span className="text-base text-center sm:text-3xl">
-                    CHANNEL {channel === -1 ? "AV" : channel.toString().padStart(2, "0")}
+                    CHANNEL {channel === -1 ? 'AV' : channel.toString().padStart(2, '0')}
                   </span>
                   <button onClick={next}>►</button>
                 </div>
                 <Link
-                  href={tv ? "/" : "/?tv"}
+                  href={tv ? '/' : '/?tv'}
                   className="hidden w-full mt-2 text-lg text-center text-red-400 sm:block lg:mt-4"
                 >
-                  {tv ? "NORMAL MODE" : "TV MODE"}
+                  {tv ? 'NORMAL MODE' : 'TV MODE'}
                 </Link>
               </div>
             </header>
 
             <main className="py-24 text-3xl md:py-32 lg:text-6xl lg:leading-snug lg:py-42">
               <p>
-                Hi! I&apos;m <span className="text-white">Humberto Piaia</span>, a brazilian full stack engineer with
-                advanced knowledge of Typescript and C#, as well as extensive experience with Node and React.
+                Hey there! I&apos;m <span className="text-white">Humberto Piaia</span>, a code-loving Brazilian who gets
+                to build awesome stuff with TypeScript (and bit of PHP and C# here and there). You&apos;ll usually find
+                me crafting web experiences with Node.js and React.
               </p>
 
-              <p className="mt-12">Over the past year, I have also been learning Elixir and Rust.</p>
+              <p className="mt-12">Lately, I&apos;ve been diving into the world of Rust and Go!</p>
 
               <p className="mt-12">
-                I&apos;m a very thoughtful and curious person, who&apos;s passionate about&nbsp;
-                <GlitchLink href="https://github.com/hpiaia">coding</GlitchLink> and{" "}
-                <GlitchLink href="https://soundcloud.com/sprnv4">music</GlitchLink>.
+                When I&apos;m not geeking out over code, you might catch me tinkering with side projects on&nbsp;
+                <GlitchLink href="https://github.com/hpiaia">GitHub</GlitchLink> or making some noise on{' '}
+                <GlitchLink href="https://soundcloud.com/sprnv4">SoundCloud</GlitchLink>. Debugging and making music
+                aren&apos;t so different after all.
               </p>
 
               <p className="mt-12">
-                If you&apos;d like to chat, feel free to send me an{" "}
-                <GlitchLink href="mailto:betopiaia@gmail.com">e-mail</GlitchLink>.
+                Want to chat about code or music? Drop me an{' '}
+                <GlitchLink href="mailto:betopiaia@gmail.com">email</GlitchLink> - I&apos;d love to hear from you!
               </p>
             </main>
 
@@ -92,5 +94,5 @@ export default function Content({ tv = false }: { tv?: boolean }) {
         </div>
       </div>
     </div>
-  );
+  )
 }

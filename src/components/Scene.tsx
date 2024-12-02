@@ -1,14 +1,14 @@
-"use client";
+'use client'
 
-import { Center, ContactShadows, Environment, Float, Html, PresentationControls, useGLTF } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import { Center, ContactShadows, Environment, Float, Html, PresentationControls, useGLTF } from '@react-three/drei'
+import { Canvas } from '@react-three/fiber'
 
 export default function Scene({ children }: React.PropsWithChildren) {
-  const model = useGLTF("/models/tv.glb");
+  const model = useGLTF('/models/tv.glb')
 
   return (
     <Canvas className="touch-none">
-      <color attach="background" args={["#0a0a0a"]} />
+      <color attach="background" args={['#0a0a0a']} />
 
       <PresentationControls global polar={[-0.2, 0.2]} azimuth={[-0.2, 0.2]}>
         <Float speed={0.1} rotation={[0, 0, 0]}>
@@ -25,5 +25,5 @@ export default function Scene({ children }: React.PropsWithChildren) {
       <Environment preset="apartment" />
       <ContactShadows position-y={-3.4} scale={5} blur={3} />
     </Canvas>
-  );
+  )
 }
