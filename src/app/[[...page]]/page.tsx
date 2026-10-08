@@ -1,23 +1,10 @@
-import './page.css'
+import { CrtScene } from '@/components/CrtScene'
+import Terminal from '@/components/Terminal'
 
-import dynamic from 'next/dynamic'
-
-import Content from '@/components/Content'
-import { Loading } from '@/components/Loading'
-
-const Scene = dynamic(() => import('@/components/Scene'), {
-  ssr: false,
-  loading: () => <Loading />,
-})
-
-export default function Home({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
-  if (typeof searchParams.tv === 'undefined') {
-    return <Content />
-  }
-
+export default function Home() {
   return (
-    <Scene>
-      <Content tv />
-    </Scene>
+    <CrtScene>
+      <Terminal />
+    </CrtScene>
   )
 }

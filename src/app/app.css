@@ -1,79 +1,212 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-/* VCR OSD Mono font */
-@font-face {
-  font-family: 'VCR OSD Mono';
-  src:
-    url('/fonts/VCROSDMono.woff2') format('woff2'),
-    url('/fonts/VCROSDMono.woff') format('woff');
+@theme {
+  --font-sans: var(--font-mono), ui-monospace, monospace;
+
+  --color-screen: #040a06;
+  --color-ph: #9dff9f;
+  --color-dim: #4f9a57;
+  --color-faint: #1c3a22;
 }
 
-/* TV turn on animation */
-@keyframes turn-on-filter {
-  0% {
-    filter: brightness(1) invert(1) saturate(1.2);
-  }
-  5% {
-    filter: brightness(4) invert(1) saturate(2);
-  }
-  15% {
-    filter: brightness(4) invert(0) saturate(2);
-  }
-  30%,
-  50% {
-    filter: brightness(10) invert(0) saturate(1);
-  }
-  70% {
-    filter: contrast(1) brightness(1) invert(0) saturate(1);
-  }
+:root {
+  --font-mono: var(--font-ubuntu-mono);
+  --weight-body: 400;
+  --weight-hero: 400;
+  --zoom: 1;
+  --glow: 0 0 4px rgba(120, 255, 140, 0.7);
 }
 
-/* Base styles */
 html,
-body,
-#root {
-  @apply h-full;
-}
-
-/* Text effects */
-.font-vcr {
+body {
+  height: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  background: var(--color-screen);
+  color: var(--color-ph);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-weight: var(--weight-body);
+  -webkit-font-smoothing: none;
   text-shadow:
-    4px 3px 0 rgba(0, 180, 180, 0.4),
-    -4px -3px 0 rgba(180, 0, 0, 0.4);
+    var(--glow),
+    1px 0 0 rgba(255, 80, 80, 0.25),
+    -1px 0 0 rgba(80, 160, 255, 0.25);
 }
 
-/* TV effects */
-.tv {
-  animation: turn-on-filter 1s;
+* {
+  scrollbar-width: none;
 }
 
-/* TV overlay effects */
-.--decontrast {
-  @apply bg-white opacity-20;
+::-webkit-scrollbar {
+  display: none;
 }
 
-.--static {
-  @apply bg-cover opacity-10 bg-static;
+::selection {
+  color: var(--color-screen);
+  background-color: var(--color-ph);
+  text-shadow: none;
 }
 
-.--artifacts {
-  @apply bg-cover opacity-40 bg-artifacts;
+.crt {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-screen);
+  container-type: inline-size;
 }
 
-.--vignette {
-  @apply bg-cover;
-  background: radial-gradient(circle, transparent 60%, black), transparent;
+.crt-screen {
+  position: relative;
+  height: 100%;
+  filter: blur(0.4px) contrast(1.15) brightness(1.05);
+  animation: turn-on 1.2s ease-out;
 }
 
-/* Loading channel state */
-.loading-channel {
-  @apply brightness-200;
+.crt-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-.loading-channel .--static,
-.loading-channel .--vignette,
-.loading-channel .--artifacts {
-  @apply opacity-30;
+.crt-scanlines {
+  background:
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.12) 0 1px, transparent 1px 3px);
+}
+
+.crt-grain {
+  opacity: 0.12;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.6 0 0 0 0 1 0 0 0 0 0.6 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  animation: grain 0.3s steps(3) infinite;
+}
+
+@keyframes grain {
+  0% {
+    background-position: 0 0;
+  }
+  33% {
+    background-position: 53px 27px;
+  }
+  66% {
+    background-position: -41px 61px;
+  }
+  100% {
+    background-position: 19px -38px;
+  }
+}
+
+.crt-sweep {
+  background: linear-gradient(to bottom, transparent 0%, rgba(157, 255, 159, 0.06) 50%, transparent 100%);
+  background-size: 100% 18%;
+  background-repeat: no-repeat;
+  animation: sweep 7s linear infinite;
+}
+
+.crt-flicker {
+  background: rgba(157, 255, 159, 0.03);
+  animation: flicker 0.12s steps(2) infinite;
+}
+
+.crt-vignette {
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.7));
+}
+
+.crt--monitor .crt-layer,
+.crt--monitor .crt-screen {
+  border-radius: 0.5rem;
+}
+
+@keyframes sweep {
+  from {
+    background-position: 0 -20%;
+  }
+  to {
+    background-position: 0 120%;
+  }
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes turn-on {
+  0% {
+    filter: brightness(6) saturate(0);
+    transform: scaleY(0.01);
+  }
+  25% {
+    filter: brightness(4) saturate(0.5);
+    transform: scaleY(1);
+  }
+  100% {
+    filter: brightness(1) saturate(1);
+    transform: scaleY(1);
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.term .xterm {
+  height: 100%;
+}
+
+.term .xterm-viewport {
+  background: transparent !important;
+}
+
+.term .xterm-screen,
+.term .xterm-rows {
+  text-shadow: var(--glow);
+}
+
+.term .xterm-image-layer {
+  filter: grayscale(1) invert(1) brightness(0.9) sepia(1) hue-rotate(65deg) saturate(3) contrast(1.1);
+  mix-blend-mode: screen;
+}
+
+.dim {
+  color: var(--color-dim);
+}
+
+button {
+  color: var(--color-ph);
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  color: white;
+}
+
+button:disabled {
+  color: var(--color-dim);
+  cursor: default;
+}
+
+.cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1em;
+  background: var(--color-ph);
+  vertical-align: -0.15em;
+  box-shadow: var(--glow);
+  animation: blink 1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crt-screen,
+  .crt-sweep,
+  .crt-flicker,
+  .crt-grain,
+  .cursor {
+    animation: none;
+  }
 }

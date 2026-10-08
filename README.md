@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# hpiaia.dev
 
-## Getting Started
+Personal site of Humberto Piaia: an xterm.js terminal running on a CRT monitor in a 3D
+bedroom scene.
 
-First, run the development server:
+## How it works
+
+- `/` renders a react-three-fiber scene: a retro desk model, a wall of posters, three.js lights
+  and shadows. The monitor screen is a DOM plane projected onto the model with drei `Html`.
+- The screen is an xterm.js terminal. Commands are plain functions in `src/lib/shell.ts` that
+  return ANSI strings and an optional action. `help` lists them.
+- Scanlines, grain, sweep, flicker and vignette are CSS layers over the terminal.
+- Mouse events are remapped through a homography so links and selection land on the right
+  character despite the perspective transform (`src/lib/pointer.ts`).
+- Key presses play Holy Panda switch samples through Web Audio. `sound off` mutes them.
+
+## Develop
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Content lives in `src/content/site.ts`. Scene layout, camera and lights are the config at the
+top of `src/components/Scene.tsx`. Posters are the list at the top of `src/components/Wall.tsx`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The 3D model is `public/models/desk.glb`, compressed with meshopt and WebP textures via
+`gltf-transform optimize`.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Credits
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Desk model: [Retro 98/XP Gaming Desktop Setup](https://sketchfab.com/3d-models/retro-98xp-gaming-desktop-setup-a5bb8e6329ae4719b8c4c7cfacecde3a)
+  by [Bacon](https://sketchfab.com/Baconmaster2890), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+- Keyboard sounds: Holy Panda samples from [kbsim](https://github.com/tplai/kbsim) by Thomas Lai,
+  MIT, via the [Mechvibes](https://github.com/hainguyents13/mechvibes) sound packs.
+- Posters: World of Warcraft art © Blizzard Entertainment, album covers © their labels. Personal,
+  non-commercial use.

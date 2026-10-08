@@ -1,3 +1,7 @@
 export function Loading() {
-  return <div className="bg-[#0A0A0A] text-white w-full h-full flex items-center justify-center">Loading...</div>
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-[#151516]">
+      <span className="cursor" aria-hidden />
+    </div>
+  )
 }
