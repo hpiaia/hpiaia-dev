@@ -34,7 +34,7 @@ export const site = {
       by: 'Thomas Lai',
       byUrl: 'https://github.com/tplai',
       license: 'MIT',
-      licenseUrl: 'https://github.com/tplai/kbsim/blob/master/LICENSE',
+      licenseUrl: 'https://github.com/tplai/kbsim/blob/master/LICENSE.md',
     },
   ] satisfies Credit[],
   posters: 'world of warcraft art © blizzard · album covers © their labels',
