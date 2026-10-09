@@ -46,10 +46,10 @@ export const site = {
     'into ai agents, infra, music',
   ],
   skills: [
-    'typescript · node · react · next',
-    'go · rust',
-    'aws · terraform · kubernetes · docker',
-    'postgres · redis · kafka',
+    ['languages', 'typescript · php · javascript · go · rust · c#'],
+    ['frontend', 'react · next · vue · angular · react native'],
+    ['backend', 'node · laravel · .net core · temporal · postgres · redis · mongodb · kafka'],
+    ['infra', 'aws · terraform · kubernetes · docker · ci/cd'],
   ],
   now: [
     'working: senior full stack engineer at constellation network',

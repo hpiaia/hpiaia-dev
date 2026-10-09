@@ -1,10 +1,11 @@
 import { site } from '@/content/site'
+import { dim } from '@/lib/ansi'
 
 export type File = { name: string; lines: string[] } | { name: string; href: string }
 
 export const home: File[] = [
   { name: 'about.txt', lines: site.about },
-  { name: 'skills.txt', lines: site.skills },
+  { name: 'skills.txt', lines: site.skills.map(([k, v]) => `${dim(k.padEnd(12))}${v}`) },
   { name: 'now.txt', lines: site.now },
 ]
 
