@@ -1,6 +1,9 @@
 'use client'
 
 import { useTexture } from '@react-three/drei'
+import { useMemo } from 'react'
+
+import { crinkleNormalMap, warpedPlane } from '@/lib/paper'
 
 type PosterProps = {
   url: string
@@ -45,14 +48,21 @@ function Poster({
 }: PosterProps & { index: number }) {
   const texture = useTexture(url)
   const height = width * aspect
+  const normalMap = useMemo(() => crinkleNormalMap(width, height), [width, height])
+  const geometry = useMemo(() => warpedPlane(width, height, index + 1), [width, height, index])
   return (
     <group
-      position={[position[0], position[1], position[2] + layer * 0.04 + index * 0.003]}
+      position={[position[0], position[1], position[2] + layer * 0.02 + index * 0.004]}
       rotation={[0, 0, rotation]}
     >
-      <mesh position={[0, 0, 0.03]} castShadow>
-        <planeGeometry args={[width, height]} />
-        <meshStandardMaterial map={texture} roughness={0.85} />
+      <mesh position={[0, 0, 0.01]} geometry={geometry} castShadow>
+        <meshStandardMaterial
+          map={texture}
+          normalMap={normalMap}
+          normalScale={[0.35, 0.35]}
+          roughness={0.65}
+          metalness={0}
+        />
       </mesh>
     </group>
   )

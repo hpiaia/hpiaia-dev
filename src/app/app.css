@@ -134,6 +134,35 @@ body {
   }
 }
 
+.power-on .crt-screen {
+  animation: turn-on 1.2s ease-out;
+}
+
+.power-off {
+  pointer-events: none;
+}
+
+.power-off .crt-screen {
+  animation: turn-off 0.45s ease-in forwards;
+}
+
+@keyframes turn-off {
+  0% {
+    filter: brightness(1);
+    transform: scaleY(1);
+  }
+  60% {
+    filter: brightness(3) saturate(0);
+    transform: scaleY(0.01);
+    opacity: 1;
+  }
+  100% {
+    filter: brightness(3) saturate(0);
+    transform: scaleY(0.005) scaleX(0.2);
+    opacity: 0;
+  }
+}
+
 @keyframes turn-on {
   0% {
     filter: brightness(6) saturate(0);
@@ -199,6 +228,22 @@ button:disabled {
   vertical-align: -0.15em;
   box-shadow: var(--glow);
   animation: blink 1s steps(1) infinite;
+}
+
+@media (pointer: coarse) {
+  .crt-screen {
+    filter: none;
+    animation: none;
+  }
+  .crt-grain,
+  .crt-flicker,
+  .crt-sweep {
+    display: none;
+  }
+  html,
+  body {
+    text-shadow: var(--glow);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

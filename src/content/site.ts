@@ -38,7 +38,7 @@ export const site = {
     },
   ] satisfies Credit[],
   posters: 'world of warcraft art © blizzard · album covers © their labels',
-  stack: ['next', 'react', 'three.js', 'react-three-fiber', 'xterm.js', 'tailwind'],
+  stack: ['next', 'react', 'three.js', 'xterm.js', 'tailwind'],
   about: [
     'full stack engineer since 2013, brazil',
     'typescript · go · rust',
@@ -48,7 +48,7 @@ export const site = {
   skills: [
     ['languages', 'typescript · php · javascript · go · rust · c#'],
     ['frontend', 'react · next · vue · angular · react native'],
-    ['backend', 'node · laravel · .net core · temporal · postgres · redis · mongodb · kafka'],
+    ['backend', 'node · laravel · .net · postgres · redis · mongodb'],
     ['infra', 'aws · terraform · kubernetes · docker · ci/cd'],
   ],
   now: [
