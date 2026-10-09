@@ -2,6 +2,7 @@ import { site } from '@/content/site'
 import { bold, dim, link } from '@/lib/ansi'
 import { completions, isDir, links, normalize, pwd, resolve, tilde } from '@/lib/fs'
 import { fonts } from '@/lib/fonts'
+import { themes } from '@/lib/theme'
 
 export type Action =
   | { type: 'clear' }
@@ -11,6 +12,7 @@ export type Action =
   | { type: 'copy'; text: string }
   | { type: 'sound'; on: boolean }
   | { type: 'cd'; path: string }
+  | { type: 'theme'; key: string }
 export type Result = { out: string[]; action?: Action }
 export type Context = { origin: string; cwd: string }
 
@@ -124,6 +126,15 @@ const commands: Record<string, Command> = {
       return { out: [dim(`font set to ${font.label}`)], action: { type: 'font', key } }
     },
   },
+  theme: {
+    usage: 'theme [name]',
+    run: ([key]) => {
+      if (!key) return { out: [dim('themes:'), ...themes.map((t) => `  ${t.key}`)] }
+      const found = themes.find((t) => t.key === key)
+      if (!found) return { out: [`theme: ${key}: not found. run theme to list`] }
+      return { out: [dim(`theme set to ${found.label}`)], action: { type: 'theme', key } }
+    },
+  },
   credits: {
     usage: 'who made what',
     run: () => {
@@ -179,11 +190,13 @@ export function complete(input: string, cwd = ''): string[] {
   const candidates =
     parts[0] === 'font'
       ? fonts.map((f) => f.key).filter((k) => k.startsWith(last))
-      : parts[0] === 'sound'
-        ? ['on', 'off'].filter((k) => k.startsWith(last))
-        : parts[0] === 'open' || parts[0] === 'copy'
-          ? links.map((l) => l.name).filter((n) => n.startsWith(last))
-          : completions(last, cwd)
+      : parts[0] === 'theme'
+        ? themes.map((t) => t.key).filter((k) => k.startsWith(last))
+        : parts[0] === 'sound'
+          ? ['on', 'off'].filter((k) => k.startsWith(last))
+          : parts[0] === 'open' || parts[0] === 'copy'
+            ? links.map((l) => l.name).filter((n) => n.startsWith(last))
+            : completions(last, cwd)
   return candidates.map((c) => `${head} ${c}`)
 }
 

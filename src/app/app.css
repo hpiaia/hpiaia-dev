@@ -14,7 +14,9 @@
   --weight-body: 400;
   --weight-hero: 400;
   --zoom: 1;
-  --glow: 0 0 4px rgba(120, 255, 140, 0.7);
+  --glow-rgb: 120 255 140;
+  --glow: 0 0 4px rgb(var(--glow-rgb) / 0.7);
+  --image-filter: grayscale(1) invert(1) brightness(0.9) sepia(1) hue-rotate(65deg) saturate(3) contrast(1.1);
 }
 
 html,
@@ -96,14 +98,14 @@ body {
 }
 
 .crt-sweep {
-  background: linear-gradient(to bottom, transparent 0%, rgba(157, 255, 159, 0.06) 50%, transparent 100%);
+  background: linear-gradient(to bottom, transparent 0%, rgb(var(--glow-rgb) / 0.06) 50%, transparent 100%);
   background-size: 100% 18%;
   background-repeat: no-repeat;
   animation: sweep 7s linear infinite;
 }
 
 .crt-flicker {
-  background: rgba(157, 255, 159, 0.03);
+  background: rgb(var(--glow-rgb) / 0.03);
   animation: flicker 0.12s steps(2) infinite;
 }
 
@@ -144,6 +146,11 @@ body {
 
 .power-off .crt-screen {
   animation: turn-off 0.45s ease-in forwards;
+}
+
+.power-off .crt {
+  visibility: hidden;
+  transition: visibility 0s 0.5s;
 }
 
 @keyframes turn-off {
@@ -198,7 +205,7 @@ body {
 }
 
 .term .xterm-image-layer {
-  filter: grayscale(1) invert(1) brightness(0.9) sepia(1) hue-rotate(65deg) saturate(3) contrast(1.1);
+  filter: var(--image-filter);
   mix-blend-mode: screen;
 }
 

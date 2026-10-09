@@ -1,6 +1,6 @@
 export const RESET = '\x1b[0m'
-export const BOLD = '\x1b[1m\x1b[38;2;216;255;217m'
-export const DIM = '\x1b[38;2;79;154;87m'
+export const BOLD = '\x1b[1m\x1b[97m'
+export const DIM = '\x1b[90m'
 export const UNDERLINE = '\x1b[4m'
 export const CLEAR = '\x1b[2J\x1b[H'
 export const CRLF = '\r\n'

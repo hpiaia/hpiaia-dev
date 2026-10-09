@@ -41,7 +41,7 @@ export const site = {
   stack: ['next', 'react', 'three.js', 'xterm.js', 'tailwind'],
   about: [
     'full stack engineer since 2013, brazil',
-    'typescript · go · rust',
+    'typescript · go · rust · php · c#',
     'now at constellation network',
     'into ai agents, infra, music',
   ],

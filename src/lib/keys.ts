@@ -68,3 +68,5 @@ export function keyUp(key: string) {
 export function warm() {
   ensure()
 }
+
+export const audio = ensure

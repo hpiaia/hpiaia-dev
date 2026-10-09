@@ -15,16 +15,8 @@ import { defaultFont, fonts } from '@/lib/fonts'
 import { keyDown, keyUp, warm } from '@/lib/keys'
 import { remapPointer } from '@/lib/pointer'
 import { bootLines, complete, loginLines, prompt, run } from '@/lib/shell'
+import { applyTheme, currentTheme, setTheme, subscribeTheme, xtermTheme } from '@/lib/theme'
 import { Crt } from '@/components/Crt'
-
-const theme = {
-  background: '#00000000',
-  foreground: '#9dff9f',
-  cursor: '#9dff9f',
-  cursorAccent: '#040a06',
-  selectionBackground: '#9dff9f',
-  selectionForeground: '#040a06',
-}
 
 function fontFamily(key: string | null) {
   const font = fonts.find((f) => f.key === key) ?? fonts.find((f) => f.key === defaultFont) ?? fonts[0]
@@ -56,6 +48,7 @@ export default function Terminal() {
     const host = hostRef.current as HTMLDivElement
 
     const font = fontFamily(localStorage.getItem('font'))
+    applyTheme()
     const term = new Xterm({
       allowProposedApi: true,
       allowTransparency: true,
@@ -69,7 +62,7 @@ export default function Terminal() {
       fontSize: 16,
       lineHeight: 1.5,
       letterSpacing: 1,
-      theme,
+      theme: xtermTheme(currentTheme()),
       linkHandler: { activate: (_, uri) => window.open(uri, '_blank', 'noreferrer'), allowNonHttpProtocols: true },
     })
     const fit = new FitAddon()
@@ -129,6 +122,7 @@ export default function Terminal() {
         localStorage.setItem('font', action.key)
         resize()
       }
+      if (action.type === 'theme') setTheme(action.key)
       if (action.type === 'copy') term.write(`\x1b]52;c;${btoa(action.text)}\x07`)
       if (action.type === 'sound') {
         sound = action.on
@@ -297,6 +291,9 @@ export default function Terminal() {
     })
     observer.observe(host)
     const unmap = remapPointer(host)
+    const untheme = subscribeTheme(() => {
+      term.options.theme = xtermTheme(currentTheme())
+    })
     void boot()
 
     return () => {
@@ -305,6 +302,7 @@ export default function Terminal() {
       selection.dispose()
       observer.disconnect()
       unmap()
+      untheme()
       term.dispose()
     }
   }, [])
