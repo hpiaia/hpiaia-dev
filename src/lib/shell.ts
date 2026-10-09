@@ -1,6 +1,6 @@
 import { site } from '@/content/site'
 import { bold, dim, link } from '@/lib/ansi'
-import { completions, links, resolve } from '@/lib/fs'
+import { completions, isDir, links, normalize, pwd, resolve, tilde } from '@/lib/fs'
 import { fonts } from '@/lib/fonts'
 
 export type Action =
@@ -10,8 +10,9 @@ export type Action =
   | { type: 'image'; url: string }
   | { type: 'copy'; text: string }
   | { type: 'sound'; on: boolean }
+  | { type: 'cd'; path: string }
 export type Result = { out: string[]; action?: Action }
-export type Context = { origin: string }
+export type Context = { origin: string; cwd: string }
 
 type Command = { usage: string; run: (args: string[], ctx: Context) => Result }
 
@@ -32,8 +33,8 @@ const commands: Record<string, Command> = {
   whoami: { usage: 'who am i', run: () => ({ out: [bold(site.name.toLowerCase())] }) },
   ls: {
     usage: 'list files',
-    run: ([path = ''], ctx) => {
-      const target = resolve(path)
+    run: ([path = '.'], ctx) => {
+      const target = resolve(path, ctx.cwd)
       if (!target) return { out: [`ls: ${path}: no such file or directory`] }
       const files = Array.isArray(target) ? target : [target]
       const names = files.map((f) => {
@@ -47,13 +48,25 @@ const commands: Record<string, Command> = {
     usage: 'print a file',
     run: ([path], ctx) => {
       if (!path) return { out: ['cat: missing file'] }
-      const target = resolve(path)
+      const target = resolve(path, ctx.cwd)
       if (!target || Array.isArray(target))
         return { out: [`cat: ${path}: ${target ? 'is a directory' : 'no such file'}`] }
       if ('lines' in target) return { out: target.lines }
       return { out: [link(absolute(target.href, ctx))] }
     },
   },
+  cd: {
+    usage: 'change directory',
+    run: ([path = '~'], ctx) => {
+      const target = normalize(path, ctx.cwd)
+      if (target === undefined || !isDir(target))
+        return {
+          out: [`cd: ${path}: ${target === undefined || !resolve(target) ? 'no such directory' : 'not a directory'}`],
+        }
+      return { out: [], action: { type: 'cd', path: target } }
+    },
+  },
+  pwd: { usage: 'print directory', run: (_, ctx) => ({ out: [pwd(ctx.cwd)] }) },
   open: {
     usage: 'open a link',
     run: ([name = ''], ctx) => {
@@ -96,10 +109,8 @@ const commands: Record<string, Command> = {
           row('os', 'hpiaia.dev 3.0'),
           row('kernel', 'next 16 · react 19'),
           row('shell', 'hsh 1.0 on xterm.js'),
-          row('display', 'crt monitor, 3d'),
+          row('display', 'hdb rg, crt display'),
           row('uptime', `${new Date().getFullYear() - site.since} years`),
-          row('lang', 'typescript, go, rust'),
-          row('location', 'brazil'),
         ],
       }
     },
@@ -149,8 +160,6 @@ const eggs: Record<string, string[]> = {
   nano: ['nano: no.'],
   music: [`${dim('sprnv4 on soundcloud → ')}${link('https://soundcloud.com/sprnv4')}`],
   hello: ['hi.'],
-  pwd: ['/home/hpiaia'],
-  cd: [dim('there is only home')],
 }
 
 export function run(input: string, ctx: Context): Result {
@@ -162,7 +171,7 @@ export function run(input: string, ctx: Context): Result {
   return { out: [`hsh: ${name}: command not found. type help`] }
 }
 
-export function complete(input: string): string[] {
+export function complete(input: string, cwd = ''): string[] {
   const parts = input.split(/\s+/)
   if (parts.length <= 1) return [...Object.keys(commands), ...Object.keys(eggs)].filter((n) => n.startsWith(parts[0]))
   const last = parts[parts.length - 1]
@@ -174,11 +183,11 @@ export function complete(input: string): string[] {
         ? ['on', 'off'].filter((k) => k.startsWith(last))
         : parts[0] === 'open' || parts[0] === 'copy'
           ? links.map((l) => l.name).filter((n) => n.startsWith(last))
-          : completions(last)
+          : completions(last, cwd)
   return candidates.map((c) => `${head} ${c}`)
 }
 
-export const prompt = `${dim(`${site.user}@${site.host}`)}:${dim('~')}$ `
+export const prompt = (cwd = '') => `${dim(`${site.user}@${site.host}`)}:${dim(tilde(cwd))}$ `
 
 export const bootLines = [
   dim('hpiaia bios · phosphor edition'),

@@ -1,0 +1,111 @@
+export const resume = {
+  name: 'humberto piaia',
+  role: 'senior full stack engineer · typescript · php · go · rust',
+  contacts: [
+    { key: 'web', text: 'hpiaia.dev', href: 'https://hpiaia.dev' },
+    { key: 'github', text: 'github.com/hpiaia', href: 'https://github.com/hpiaia' },
+    { key: 'linkedin', text: 'linkedin.com/in/hpiaia', href: 'https://linkedin.com/in/hpiaia' },
+    { key: 'email', text: 'betopiaia@gmail.com', href: 'mailto:betopiaia@gmail.com' },
+    { key: 'phone', text: '+55 55 99928-6765' },
+    { key: 'where', text: 'santa catarina, brazil · utc-3' },
+  ],
+  about:
+    'full stack engineer since 2013. i build and run web products end to end: product code in **typescript**, **php**, **go** and **rust**, and the infrastructure under it on **aws** with **terraform**, **kubernetes** and **docker**. i have led the move from legacy stacks to modern ones several times, measured the gains, and kept clusters with hundreds of services healthy.',
+  jobs: [
+    {
+      title: 'Senior Full Stack Engineer',
+      company: 'Constellation Network',
+      slug: 'constellation-network',
+      url: 'https://constellationnetwork.io',
+      from: '2024-04',
+      to: 'now',
+      bullets: [
+        'Built the [cross-chain bridge](https://bridge.constellationnetwork.io/) that moves assets between Constellation and EVM chains, from the smart contract integration to the web app.',
+        'Maintain and evolve the [Dor](https://www.getdor.com/) and [Dor Traffic Miner](https://constellationnetwork.io/dtm/) platforms, a network of foot-traffic sensors: new features, bug fixes and a steady rise in test coverage. **Node**, **TypeScript**, **AWS Lambda**, **Kinesis**, **SQS**, **SNS**.',
+        'Manage the application infrastructure on **AWS** with **Terraform** and keep the **CI/CD** pipelines on **CircleCI** fast.',
+      ],
+    },
+    {
+      title: 'Senior Full Stack Engineer',
+      company: 'Smartrr',
+      slug: 'smartrr',
+      url: 'https://smartrr.com',
+      from: '2023-10',
+      to: '2024-03',
+      bullets: [
+        'Moved backend background processing onto **Temporal.io**, replacing legacy cron jobs with durable, recurring workflows.',
+        'Migrated the storefront from **Gatsby** to **Next.js**, cutting build times by **80%**.',
+        'Raised test coverage and moved every suite from Jest to **Vitest** with SWC, making test runs **75%** faster.',
+      ],
+    },
+    {
+      title: 'Senior Full Stack Engineer',
+      company: 'McGraw Hill',
+      slug: 'mcgraw-hill',
+      url: 'https://www.mheducation.com',
+      from: '2021-08',
+      to: '2023-10',
+      bullets: [
+        'Shipped features and refactors across education platforms serving a large student base.',
+        'Built and maintained services with **Angular**, **TypeScript**, **Go**, **AWS**, **Docker** and **Terraform**.',
+      ],
+    },
+    {
+      title: 'Full Stack & DevOps Engineer',
+      company: 'RankMyApp',
+      slug: 'rankmyapp',
+      url: 'https://rankmyapp.com',
+      from: '2020-07',
+      to: '2021-08',
+      bullets: [
+        'Designed and ran the communication architecture for **100+ dockerized microservices** on **Kubernetes** (AKS).',
+        'Built the CI/CD pipelines on **GitHub Actions** and **Azure**.',
+        'Set up cluster observability with **Grafana**, **New Relic**, **Linkerd** and **Graylog**.',
+      ],
+    },
+    {
+      title: 'Full Stack Developer & Tech Lead',
+      company: 'Questor Sistemas',
+      slug: 'questor-sistemas',
+      url: 'https://questor.com.br',
+      from: '2017-12',
+      to: '2019-07',
+      bullets: [
+        'Built a web crawler from scratch with queue management handling **100,000+ jobs per day**, in **PHP**/**Laravel** with **Redis** and **MongoDB**, deployed serverless on **AWS Lambda**. Better scaling at lower cost.',
+        'Led an internal **C# / .NET Core** framework following Domain-Driven Design and a multitier architecture, with a **React** + **TypeScript** design system on the front end.',
+      ],
+    },
+    {
+      title: 'Full Stack & Mobile Developer',
+      company: 'iBR Soft',
+      slug: 'ibr-soft',
+      url: 'https://ibrsoft.com',
+      from: '2016-06',
+      to: '2017-12',
+      bullets: [
+        "Designed, built and maintained web and mobile apps with **Laravel**, **React** and **React Native**, integrated with the company's core product. Revenue per customer grew by up to **50%**.",
+        'Introduced SOLID, Domain-Driven Design and unit testing across the codebase.',
+      ],
+    },
+    {
+      title: 'Full Stack Developer',
+      company: 'Pixels',
+      slug: 'pixels',
+      from: '2014-01',
+      to: '2016-06',
+      bullets: [
+        'Built original website layouts with **Laravel** and **Vue.js**, turning high-fidelity prototypes into working products together with designers.',
+      ],
+    },
+  ],
+  skills: [
+    ['languages', 'typescript · php · javascript · go · rust · c#'],
+    ['frontend', 'react · next · vue · angular · react native'],
+    ['backend', 'node · laravel · .net core · temporal · postgres · redis · mongodb · kafka'],
+    ['infra', 'aws · terraform · kubernetes · docker · ci/cd'],
+  ],
+  languages: [
+    ['english', 'fluent'],
+    ['portuguese', 'native'],
+  ],
+}

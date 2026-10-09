@@ -7,10 +7,7 @@ import type { Metadata } from 'next'
 import { site } from '@/content/site'
 import { fontClassNames } from '@/lib/fonts'
 
-export const metadata: Metadata = {
-  title: site.title,
-  description: site.description,
-}
+export const metadata: Metadata = { title: site.title, description: site.description }
 
 export default function RootLayout({ children }: Readonly<React.PropsWithChildren>) {
   return (

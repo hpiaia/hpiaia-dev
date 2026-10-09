@@ -88,8 +88,9 @@ export default function Terminal() {
     let cursor = 0
     let history: string[] = []
     let historyIndex = -1
+    let cwd = ''
 
-    const ctx = () => ({ origin: window.location.origin })
+    const ctx = () => ({ origin: window.location.origin, cwd })
 
     function resize() {
       const width = host.clientWidth
@@ -99,7 +100,7 @@ export default function Terminal() {
     }
 
     function redraw() {
-      term.write(`\r\x1b[K${prompt}${buffer}`)
+      term.write(`\r\x1b[K${prompt(cwd)}${buffer}`)
       const back = buffer.length - cursor
       if (back > 0) term.write(`\x1b[${back}D`)
     }
@@ -118,6 +119,7 @@ export default function Terminal() {
 
       const action = result.action
       if (!action) return
+      if (action.type === 'cd') cwd = action.path
       if (action.type === 'open') window.open(action.href, '_blank', 'noreferrer')
       if (action.type === 'font') {
         const next = fontFamily(action.key)
@@ -155,7 +157,7 @@ export default function Terminal() {
       busy = true
       await execute(input)
       if (disposed) return
-      term.write(prompt)
+      term.write(prompt(cwd))
       busy = false
     }
 
@@ -172,7 +174,7 @@ export default function Terminal() {
           }
           return
         case '\t': {
-          const options = complete(buffer)
+          const options = complete(buffer, cwd)
           if (options.length === 1) {
             buffer = options[0] + (options[0].endsWith('/') ? '' : ' ')
             cursor = buffer.length
@@ -184,7 +186,7 @@ export default function Terminal() {
           return
         }
         case '\x03':
-          term.write(`^C${CRLF}${prompt}`)
+          term.write(`^C${CRLF}${prompt(cwd)}`)
           buffer = ''
           cursor = 0
           return
@@ -270,12 +272,12 @@ export default function Terminal() {
       if (disposed) return
       writeLines(loginLines())
       for (const command of ['whoami', 'cat about.txt', 'ls links/']) {
-        term.write(prompt + command + CRLF)
+        term.write(prompt(cwd) + command + CRLF)
         await execute(command)
         await sleep(150)
         if (disposed) return
       }
-      term.write(prompt)
+      term.write(prompt(cwd))
       busy = false
     }
 

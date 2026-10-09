@@ -27,6 +27,9 @@ top of `src/components/Scene.tsx`. Posters are the list at the top of `src/compo
 The 3D model is `public/models/desk.glb`, compressed with meshopt and WebP textures via
 `gltf-transform optimize`.
 
+The resume is data in `src/content/resume.ts`, rendered to PDF with `@react-pdf/renderer` by the
+`/resume.pdf` route at build time.
+
 ## Credits
 
 - Desk model: [Retro 98/XP Gaming Desktop Setup](https://sketchfab.com/3d-models/retro-98xp-gaming-desktop-setup-a5bb8e6329ae4719b8c4c7cfacecde3a)
