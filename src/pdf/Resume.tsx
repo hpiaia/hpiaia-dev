@@ -53,7 +53,7 @@ const s = StyleSheet.create({
   band: { position: 'absolute', top: 0, left: 0, right: 0, height: 6, backgroundColor: accent },
   name: { fontFamily: 'Inter Display', fontSize: 28, lineHeight: 1.1, letterSpacing: -0.5 },
   last: { fontWeight: 700, color: accent },
-  role: { fontSize: 10.5, fontWeight: 500, color: muted, marginTop: 4, letterSpacing: 2 },
+  role: { fontSize: 10.5, fontWeight: 500, color: muted, marginTop: 4 },
   contacts: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 12, paddingTop: 10, borderTop: `1 solid ${rule}` },
   contact: { flexDirection: 'row', alignItems: 'center', width: '33.33%', marginBottom: 7, fontSize: 9, lineHeight: 1 },
   icon: { marginRight: 5, marginTop: 1.2 },
@@ -61,7 +61,8 @@ const s = StyleSheet.create({
   link: { color: ink, textDecoration: 'none' },
   section: { marginTop: 18 },
   headRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
-  heading: { fontWeight: 700, fontSize: 10.5, letterSpacing: 1.5, color: accent },
+  // no letterSpacing on text: PDF extraction (and ATS parsers) read it as "S K I L L S"
+  heading: { fontWeight: 700, fontSize: 10.5, color: accent },
   headRule: { flex: 1, height: 1, backgroundColor: rule, marginLeft: 8 },
   bold: { fontWeight: 600 },
   job: { marginTop: 14 },
@@ -71,9 +72,9 @@ const s = StyleSheet.create({
   pill: { backgroundColor: tint, borderRadius: 8, paddingTop: 1.3, paddingBottom: 2.7, paddingHorizontal: 5.5 },
   pillText: { fontSize: 9, lineHeight: 1 },
   when: { marginLeft: 'auto' },
-  company: { flexDirection: 'row', alignItems: 'center', marginTop: 5, marginBottom: 5 },
+  company: { flexDirection: 'row', alignItems: 'center', marginTop: 5, marginBottom: 8 },
   companyLink: { flexDirection: 'row', alignItems: 'center', textDecoration: 'none' },
-  companySep: { width: 1, height: 9, backgroundColor: rule, marginHorizontal: 8, top: 0.4 },
+  companySep: { color: '#aeacb8', fontSize: 9.5, lineHeight: 1, marginLeft: 5, marginRight: 6 },
   companyText: { color: accent, textDecoration: 'none', fontSize: 9.5, fontWeight: 500, lineHeight: 1 },
   bullet: { flexDirection: 'row', marginTop: 2, paddingLeft: 2 },
   dot: { width: 4, height: 4, borderRadius: 2, backgroundColor: accent, marginTop: 4.7, marginRight: 8 },
@@ -217,7 +218,7 @@ function JobView({ job, first }: { job: (typeof resume.jobs)[0]; first: boolean 
       <View style={s.company}>
         {job.companies.map((c, i) => (
           <Fragment key={c.name}>
-            {i > 0 && <View style={s.companySep} />}
+            {i > 0 && <Text style={s.companySep}>&</Text>}
             {'url' in c ? (
               <Link src={c.url} style={s.companyLink}>
                 <Text style={s.companyText}>{c.name}</Text>
@@ -300,6 +301,17 @@ export function Resume() {
                   </Pill>
                 ))}
               </View>
+            </View>
+          ))}
+        </Section>
+
+        <Section title="Education" wrap={false}>
+          {resume.education.map((e) => (
+            <View key={e.school} style={s.head}>
+              <Text style={{ lineHeight: 1 }}>
+                <Text style={s.bold}>{e.field}</Text> · {e.school}
+              </Text>
+              <Pill style={s.when} color={accent}>{`${e.from} – ${e.to}`}</Pill>
             </View>
           ))}
         </Section>

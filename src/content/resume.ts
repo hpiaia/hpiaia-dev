@@ -10,7 +10,7 @@ export const resume = {
     { key: 'Location', text: 'Santa Catarina, Brazil' },
   ],
   about:
-    'Full stack engineer with 10+ years of experience building and running web products end to end: product code in **TypeScript**, **PHP**, **Go** and **Rust**, and the infrastructure under it on **AWS** with **Terraform**, **Kubernetes** and **Docker**. Led several migrations from legacy stacks to modern ones with measurable gains, and kept clusters with hundreds of services healthy.',
+    'Senior full stack engineer with 12+ years building and running web products end to end, working remotely with US teams since 2021. I write the product code in **TypeScript** (React, Next.js, Node.js), PHP and Go, and run the infrastructure under it on **AWS** with **Terraform**, **Docker** and **Kubernetes**.',
   jobs: [
     {
       title: 'Senior Full Stack Engineer',
@@ -22,9 +22,10 @@ export const resume = {
       from: '2024-04',
       to: 'now',
       bullets: [
-        'Built the [cross-chain bridge](https://bridge.constellationnetwork.io/) that moves assets between Constellation and EVM chains, from the smart contract integration to the web app.',
-        'Maintain and evolve the [Dor](https://www.getdor.com/) and [Dor Traffic Miner](https://constellationnetwork.io/dtm/) platforms, a network of foot-traffic sensors: new features, bug fixes and a steady rise in test coverage. Node, TypeScript, AWS Lambda, Kinesis, SQS, SNS.',
-        'Manage the application infrastructure on AWS with Terraform and keep the CI/CD pipelines on CircleCI fast.',
+        'Built the [cross-chain bridge](https://bridge.constellationnetwork.io/) that moves assets between Constellation and EVM chains (Ethereum, Base, Ink), from the smart contract integration to the web app.',
+        'Maintained and evolved the [Dor](https://www.getdor.com/) and [Dor Traffic Miner](https://constellationnetwork.io/dtm/) platforms, a network of foot-traffic sensors: new features, bug fixes and a steady rise in test coverage. Node.js, TypeScript, AWS Lambda, Kinesis, SQS, SNS.',
+        "Helped build and maintain the network's decentralized exchange frontend and indexer, and the DAG Explorer.",
+        'Managed the AWS infrastructure with Terraform and SST (Pulumi), with CI/CD on GitHub Actions and CircleCI.',
       ],
     },
     {
@@ -35,7 +36,7 @@ export const resume = {
       to: '2024-03',
       bullets: [
         'Moved backend background processing onto Temporal.io, replacing legacy cron jobs with durable, recurring workflows.',
-        'Migrated the storefront from Gatsby to Next.js, cutting build times by **80%**.',
+        'Migrated the Shopify app frontend from Gatsby to Next.js, cutting build times by **80%**.',
         'Raised test coverage and moved every suite from Jest to Vitest with SWC, making test runs **75%** faster.',
       ],
     },
@@ -46,8 +47,9 @@ export const resume = {
       from: '2021-08',
       to: '2023-10',
       bullets: [
-        'Shipped features and refactors across education platforms serving a large student base.',
-        'Built and maintained services with Angular, TypeScript, Go, AWS, Docker and Terraform.',
+        'Built and maintained the student-facing apps that deliver McGraw Hill ePub textbooks online to thousands of students in schools and universities, with a PHP (Symfony) backend and an Angular + TypeScript frontend.',
+        'Implemented search across ePub content with Go and OpenSearch.',
+        'Shipped on AWS with Docker and Terraform.',
       ],
     },
     {
@@ -58,25 +60,28 @@ export const resume = {
       to: '2021-08',
       bullets: [
         'Designed and ran the communication architecture for **100+ dockerized microservices** on Kubernetes (AKS).',
+        'Built services and improved their architecture with TypeScript, Node.js, RabbitMQ and PostgreSQL.',
         'Built the CI/CD pipelines on GitHub Actions and Azure.',
         'Set up cluster observability with Grafana, New Relic, Linkerd and Graylog.',
       ],
     },
     {
-      title: 'Full Stack Developer & Tech Lead',
+      title: 'Full Stack & Lead Developer',
       companies: [{ name: 'Questor Sistemas', url: 'https://questor.com.br' }],
       slug: 'questor-sistemas',
       from: '2017-12',
       to: '2019-07',
       bullets: [
-        'Built a web crawler from scratch with queue management handling **100,000+ jobs per day**, in PHP/Laravel with Redis and MongoDB, deployed serverless on AWS Lambda. Better scaling at lower cost.',
-        'Led an internal C# / .NET Core framework following Domain-Driven Design and a multitier architecture, with a React + TypeScript design system on the front end.',
+        'Built a web crawler from scratch with queue management handling **100,000+ jobs per day**, in PHP/Laravel with Redis and MongoDB.',
+        'Deployed the crawler serverless on AWS Lambda so it scaled horizontally on its own, lowering costs while improving performance.',
+        'Led the design of an internal C# / .NET Core framework that standardized how new products were built, making the team faster and the products more consistent.',
+        'Built the framework with Domain-Driven Design, a multitier architecture and TDD, reaching **70%** test coverage, plus a React + TypeScript design system for the front end.',
       ],
     },
     {
       title: 'Full Stack & Mobile Developer',
-      companies: [{ name: 'iBR Soft', url: 'https://ibrsoft.com' }],
-      slug: 'ibr-soft',
+      companies: [{ name: 'iBR Tecnologia', url: 'https://ibrsoft.com' }],
+      slug: 'ibr-tecnologia',
       from: '2016-06',
       to: '2017-12',
       bullets: [
@@ -88,7 +93,7 @@ export const resume = {
       title: 'Full Stack Developer',
       companies: [{ name: 'Pixels' }],
       slug: 'pixels',
-      from: '2014-01',
+      from: '2013-01',
       to: '2016-06',
       bullets: [
         'Built original website layouts with Laravel and Vue.js, turning high-fidelity prototypes into working products together with designers.',
@@ -98,8 +103,15 @@ export const resume = {
   skills: [
     ['Programming', 'TypeScript, PHP, JavaScript, Go, Rust, C#'],
     ['Frontend', 'React, Next.js, Vue, Angular, React Native'],
-    ['Backend', 'Node.js, Laravel, .NET Core, Temporal, PostgreSQL, Redis, MongoDB, Kafka'],
-    ['Infrastructure', 'AWS, Terraform, Kubernetes, Docker, CI/CD'],
+    [
+      'Backend',
+      'Node.js, Laravel, Symfony, .NET Core, Temporal, PostgreSQL, Redis, MongoDB, OpenSearch, RabbitMQ, Kafka',
+    ],
+    ['Infrastructure', 'AWS, Lambda, ECS, SQS, SNS, Kinesis, RDS, Terraform, Kubernetes, Docker'],
+    ['CI/CD & testing', 'GitHub Actions, CircleCI, Vitest, Jest, End-to-end testing'],
+  ],
+  education: [
+    { field: 'Computer Science', school: 'Universidade Federal da Fronteira Sul (UFFS)', from: '2014', to: '2019' },
   ],
   languages: [
     ['English', 'Fluent'],

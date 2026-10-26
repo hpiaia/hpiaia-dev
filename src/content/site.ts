@@ -49,7 +49,8 @@ export const site = {
     ['languages', 'typescript · php · javascript · go · rust · c#'],
     ['frontend', 'react · next · vue · angular · react native'],
     ['backend', 'node · laravel · .net · postgres · redis · mongodb'],
-    ['infra', 'aws · terraform · kubernetes · docker · ci/cd'],
+    ['infra', 'aws · terraform · kubernetes · docker'],
+    ['ci & tests', 'github actions · circleci · vitest · jest'],
   ],
   now: [
     'working: senior full stack engineer at constellation network',
