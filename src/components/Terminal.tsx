@@ -5,18 +5,19 @@ import '@xterm/xterm/css/xterm.css'
 import { ClipboardAddon } from '@xterm/addon-clipboard'
 import { FitAddon } from '@xterm/addon-fit'
 import { ImageAddon } from '@xterm/addon-image'
-import { ProgressAddon } from '@xterm/addon-progress'
 import { Unicode11Addon } from '@xterm/addon-unicode11'
 import { Terminal as Xterm } from '@xterm/xterm'
 import { useEffect, useRef } from 'react'
 
-import { CLEAR, CRLF, dim, image, progress } from '@/lib/ansi'
+import type { AppKey } from '@/lib/apps'
+import { CLEAR, CRLF, image } from '@/lib/ansi'
 import { defaultFont, fonts } from '@/lib/fonts'
+import { home } from '@/lib/fs'
 import { keyDown, keyUp, warm } from '@/lib/keys'
 import { remapPointer } from '@/lib/pointer'
-import { bootLines, complete, loginLines, prompt, run } from '@/lib/shell'
-import { applyTheme, currentTheme, setTheme, subscribeTheme, xtermTheme } from '@/lib/theme'
-import { Crt } from '@/components/Crt'
+import { setSetting } from '@/lib/settings'
+import { bootLines, complete, prompt, run, startup } from '@/lib/shell'
+import { currentTheme, setTheme, subscribeTheme, theme, useTheme, xtermTheme } from '@/lib/theme'
 
 function fontFamily(key: string | null) {
   const font = fonts.find((f) => f.key === key) ?? fonts.find((f) => f.key === defaultFont) ?? fonts[0]
@@ -28,11 +29,6 @@ function fontFamily(key: string | null) {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-function bar(value: number, width = 30) {
-  const filled = Math.round((value / 100) * width)
-  return `${dim('[')}${'#'.repeat(filled)}${dim('.'.repeat(width - filled))}${dim(']')} ${String(Math.round(value)).padStart(3)}%`
-}
-
 async function toBase64(url: string) {
   const response = await fetch(url)
   const buffer = await response.arrayBuffer()
@@ -41,37 +37,43 @@ async function toBase64(url: string) {
   return { base64: btoa(binary), bytes: buffer.byteLength }
 }
 
-export default function Terminal() {
+type Props = { active?: boolean; onExit?: () => void; onApp?: (key: AppKey) => void }
+
+export default function Terminal({ active = true, onExit, onApp }: Props) {
   const hostRef = useRef<HTMLDivElement>(null)
+  const termRef = useRef<Xterm | null>(null)
+  const background = theme(useTheme()).bg
+  const handlers = useRef({ onExit, onApp })
+  useEffect(() => {
+    handlers.current = { onExit, onApp }
+  })
 
   useEffect(() => {
     const host = hostRef.current as HTMLDivElement
 
-    const font = fontFamily(localStorage.getItem('font'))
-    applyTheme()
+    let fontKey = localStorage.getItem('font') ?? defaultFont
+    const font = fontFamily(fontKey)
     const term = new Xterm({
       allowProposedApi: true,
-      allowTransparency: true,
       cursorBlink: true,
-      cursorStyle: 'block',
+      cursorStyle: 'underline',
+      cursorWidth: 2,
       convertEol: true,
       scrollback: 500,
       fontFamily: font.family,
       fontWeight: font.weight,
       fontWeightBold: font.bold,
       fontSize: 16,
-      lineHeight: 1.5,
-      letterSpacing: 1,
+      lineHeight: 1,
       theme: xtermTheme(currentTheme()),
       linkHandler: { activate: (_, uri) => window.open(uri, '_blank', 'noreferrer'), allowNonHttpProtocols: true },
     })
+    termRef.current = term
     const fit = new FitAddon()
-    const progressAddon = new ProgressAddon()
     term.loadAddon(fit)
     term.loadAddon(new Unicode11Addon())
     term.loadAddon(new ImageAddon({ sixelSupport: false, showPlaceholder: false }))
     term.loadAddon(new ClipboardAddon())
-    term.loadAddon(progressAddon)
     term.unicode.activeVersion = '11'
 
     let disposed = false
@@ -81,13 +83,15 @@ export default function Terminal() {
     let cursor = 0
     let history: string[] = []
     let historyIndex = -1
-    let cwd = ''
+    let cwd = home
 
     const ctx = () => ({ origin: window.location.origin, cwd })
 
     function resize() {
       const width = host.clientWidth
-      term.options.fontSize = Math.round(width / 42)
+      // The VGA bitmap font is only crisp at whole multiples of its 16px design size
+      term.options.fontSize =
+        fontKey === 'vga' ? (width >= 2200 ? 32 : 16) : Math.min(24, Math.max(15, Math.round(width / 38)))
       const dims = fit.proposeDimensions()
       if (dims && dims.cols > 0 && dims.rows > 1) term.resize(dims.cols, dims.rows - 1)
     }
@@ -116,17 +120,24 @@ export default function Terminal() {
       if (action.type === 'open') window.open(action.href, '_blank', 'noreferrer')
       if (action.type === 'font') {
         const next = fontFamily(action.key)
+        await document.fonts.load(`16px ${next.family}`)
         term.options.fontFamily = next.family
         term.options.fontWeight = next.weight
         term.options.fontWeightBold = next.bold
         localStorage.setItem('font', action.key)
+        fontKey = action.key
         resize()
       }
       if (action.type === 'theme') setTheme(action.key)
+      if (action.type === 'app') handlers.current.onApp?.(action.key)
+      if (action.type === 'exit') {
+        await sleep(300)
+        handlers.current.onExit?.()
+      }
       if (action.type === 'copy') term.write(`\x1b]52;c;${btoa(action.text)}\x07`)
       if (action.type === 'sound') {
         sound = action.on
-        localStorage.setItem('sound', sound ? 'on' : 'off')
+        setSetting('sound', sound ? 'on' : 'off')
       }
       if (action.type === 'image') {
         try {
@@ -240,36 +251,21 @@ export default function Terminal() {
     }
 
     async function boot() {
-      await document.fonts.ready
+      // The prompt font is only used inside xterm, so nothing loads it unless asked; cells are measured from it
+      await Promise.all([document.fonts.load(`16px ${font.family}`), document.fonts.ready])
       if (disposed) return
       term.open(host)
       resize()
       term.focus()
       host.addEventListener('pointerdown', warm, { once: true })
 
-      if (!sessionStorage.getItem('booted')) {
-        const change = progressAddon.onChange(({ state, value }) => {
-          if (state === 1) term.write(`\r${bar(value)}`)
-        })
-        for (const [i, line] of bootLines.entries()) {
-          await sleep(200)
-          if (disposed) return
-          term.write(`\r\x1b[K${line}${CRLF}`)
-          term.write(progress(((i + 1) / bootLines.length) * 95))
-        }
-        await sleep(300)
-        term.write(progress(100) + `\r${bar(100)}` + CRLF + CRLF)
-        change.dispose()
-        await sleep(300)
-        sessionStorage.setItem('booted', '1')
-      }
-      if (disposed) return
-      writeLines(loginLines())
-      for (const command of ['whoami', 'cat about.txt', 'ls links/']) {
+      writeLines(bootLines())
+      for (const command of startup) {
+        await sleep(250)
+        if (disposed) return
         term.write(prompt(cwd) + command + CRLF)
         await execute(command)
-        await sleep(150)
-        if (disposed) return
+        term.write(CRLF)
       }
       term.write(prompt(cwd))
       busy = false
@@ -298,6 +294,7 @@ export default function Terminal() {
 
     return () => {
       disposed = true
+      termRef.current = null
       data.dispose()
       selection.dispose()
       observer.disconnect()
@@ -307,9 +304,14 @@ export default function Terminal() {
     }
   }, [])
 
+  // Bringing the window to the front hands the keyboard back to the prompt
+  useEffect(() => {
+    if (active) termRef.current?.focus()
+  }, [active])
+
   return (
-    <Crt className="crt--monitor h-full select-none rounded-lg">
-      <div ref={hostRef} className="term h-full w-full px-6 py-6 md:px-10 md:py-8" />
-    </Crt>
+    <div className="h-full px-2 py-1 select-none" style={{ background }}>
+      <div ref={hostRef} className="term h-full w-full" />
+    </div>
   )
 }

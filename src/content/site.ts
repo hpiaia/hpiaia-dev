@@ -15,8 +15,18 @@ export const site = {
   description: 'Full stack engineer since 2013, Brazil. TypeScript, Go, Rust.',
   user: 'hpiaia',
   host: 'dev',
-  since: 2013,
+  // The year hpiaia97 was first powered on: uptime, build number and copyright count from here
+  born: 1997,
   avatar: '/avatar.jpg',
+  // From the LinkedIn About section; the year count is computed so it never goes stale
+  bio: [
+    'I am a full stack engineer with advanced expertise in TypeScript, PHP, C# and DevOps.',
+    "But let's rewind a bit, shall we?",
+    `My journey began in 2010, as a curious teenager experimenting with creating games and servers. To my surprise, things went surprisingly well and in 2012 I launched my first game server (written in C), which quickly attracted over a hundred active players. Over the next couple of years, I realized this wasn't just a hobby. This was my passion and I could do that for the rest of my life. Indeed, that's what I have been doing for the past ${new Date().getFullYear() - 2012} years.`,
+    "Over all those years, I've transitioned from designing website layouts to developing robust web applications using TypeScript and C#, aiding businesses in expanding their customer base and revenue.",
+    "My expertise also extends to DevOps; I've architected and maintained clusters hosting over 100 dockerized microservices with Kubernetes, Docker and Terraform.",
+    'Now, I specialize in optimizing software performance using advanced technologies like TypeScript, Go, and Rust.',
+  ],
   credits: [
     {
       what: '3d model',
@@ -26,6 +36,15 @@ export const site = {
       byUrl: 'https://sketchfab.com/Baconmaster2890',
       license: 'CC BY 4.0',
       licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+    },
+    {
+      what: 'prompt font',
+      title: 'IBM VGA 8x16, Ultimate Oldschool PC Font Pack',
+      url: 'https://int10h.org/oldschool-pc-fonts/',
+      by: 'VileR',
+      byUrl: 'https://int10h.org/',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
     },
     {
       what: 'key sounds',

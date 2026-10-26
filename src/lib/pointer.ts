@@ -41,7 +41,7 @@ function homography(from: Point[], to: Point[]) {
 }
 
 function probes(screen: HTMLElement) {
-  const existing = screen.querySelectorAll<HTMLElement>('[data-probe]')
+  const existing = screen.querySelectorAll<HTMLElement>(':scope > [data-probe]')
   if (existing.length === 4) return [...existing]
   return (['0 0', '100% 0', '0 100%', '100% 100%'] as const).map((pos) => {
     const [left, top] = pos.split(' ')
@@ -53,6 +53,29 @@ function probes(screen: HTMLElement) {
   })
 }
 
+function isScaled(el: HTMLElement, rect: DOMRect) {
+  return Math.abs(rect.width - el.offsetWidth) > 1 || Math.abs(rect.height - el.offsetHeight) > 1
+}
+
+// Maps a viewport point into the element's own CSS pixels, through any 2D or 3D transform
+export function localPoint(el: HTMLElement, x: number, y: number): Point {
+  const rect = el.getBoundingClientRect()
+  if (!isScaled(el, rect)) return [x - rect.left, y - rect.top]
+  const w = el.offsetWidth
+  const h = el.offsetHeight
+  const projected = probes(el).map((p) => {
+    const r = p.getBoundingClientRect()
+    return [r.left, r.top] as Point
+  })
+  const toLocal = homography(projected, [
+    [0, 0],
+    [w, 0],
+    [0, h],
+    [w, h],
+  ])
+  return toLocal ? toLocal([x, y]) : [x - rect.left, y - rect.top]
+}
+
 export function remapPointer(host: HTMLElement) {
   function remap(event: Marked) {
     if (event[marker]) return
@@ -61,23 +84,8 @@ export function remapPointer(host: HTMLElement) {
     if (!screen || !target || !screen.contains(target)) return
 
     const rect = screen.getBoundingClientRect()
-    const scaled = Math.abs(rect.width - screen.offsetWidth) > 1 || Math.abs(rect.height - screen.offsetHeight) > 1
-    if (!scaled) return
-
-    const w = screen.offsetWidth
-    const h = screen.offsetHeight
-    const projected = probes(screen).map((p) => {
-      const r = p.getBoundingClientRect()
-      return [r.left, r.top] as Point
-    })
-    const toLocal = homography(projected, [
-      [0, 0],
-      [w, 0],
-      [0, h],
-      [w, h],
-    ])
-    if (!toLocal) return
-    const [lx, ly] = toLocal([event.clientX, event.clientY])
+    if (!isScaled(screen, rect)) return
+    const [lx, ly] = localPoint(screen, event.clientX, event.clientY)
 
     event.stopImmediatePropagation()
     const copy = new MouseEvent(event.type, {

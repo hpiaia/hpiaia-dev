@@ -1,62 +1,61 @@
 import { useSyncExternalStore } from 'react'
 
+// Command prompt color schemes, named after the `color` attribute codes they mimic
 export type Theme = {
   key: string
   label: string
+  code: string
   fg: string
   dim: string
   bold: string
-  screen: string
-  glow: string
-  image: string
+  bg: string
+  led: string
 }
-
-const tint = 'grayscale(1) invert(1) brightness(0.9) sepia(1)'
 
 export const themes: Theme[] = [
   {
     key: 'gray',
-    label: 'gray',
-    fg: '#d6d6d2',
-    dim: '#7f7f7c',
+    label: 'Gray',
+    code: '07',
+    fg: '#c0c0c0',
+    dim: '#808080',
     bold: '#ffffff',
-    screen: '#070707',
-    glow: '220 220 215',
-    image: 'grayscale(1) invert(1) brightness(0.95) contrast(1.1)',
+    bg: '#000000',
+    led: '#f2f2f2',
   },
   {
     key: 'green',
-    label: 'green',
-    fg: '#9dff9f',
-    dim: '#4f9a57',
-    bold: '#d8ffd9',
-    screen: '#040a06',
-    glow: '120 255 140',
-    image: `${tint} hue-rotate(65deg) saturate(3) contrast(1.1)`,
+    label: 'Green',
+    code: '0A',
+    fg: '#55ff55',
+    dim: '#00aa00',
+    bold: '#ccffcc',
+    bg: '#000000',
+    led: '#39ff14',
   },
   {
     key: 'blue',
-    label: 'blue',
-    fg: '#7fc8ff',
-    dim: '#3f7399',
-    bold: '#cfeaff',
-    screen: '#03060b',
-    glow: '110 190 255',
-    image: `${tint} hue-rotate(170deg) saturate(3) contrast(1.1)`,
+    label: 'Blue',
+    code: '1F',
+    fg: '#ffffff',
+    dim: '#aaaaaa',
+    bold: '#ffff55',
+    bg: '#0000a8',
+    led: '#4aa8ff',
   },
   {
-    key: 'red',
-    label: 'red',
-    fg: '#ff6b5e',
-    dim: '#99433a',
-    bold: '#ffc9c2',
-    screen: '#0b0303',
-    glow: '255 110 95',
-    image: `${tint} hue-rotate(-30deg) saturate(3) contrast(1.1)`,
+    key: 'amber',
+    label: 'Amber',
+    code: '06',
+    fg: '#ffb000',
+    dim: '#aa7000',
+    bold: '#ffe0a0',
+    bg: '#000000',
+    led: '#ffb000',
   },
 ]
 
-export const defaultTheme = 'green'
+export const defaultTheme = 'gray'
 
 const listeners = new Set<() => void>()
 
@@ -65,23 +64,11 @@ export function currentTheme() {
   return themes.some((t) => t.key === key) ? (key as string) : defaultTheme
 }
 
-export const theme = (key: string) => themes.find((t) => t.key === key) ?? themes[1]
-
-export function applyTheme(key = currentTheme()) {
-  const t = theme(key)
-  const root = document.documentElement
-  root.dataset.theme = t.key
-  root.style.setProperty('--color-ph', t.fg)
-  root.style.setProperty('--color-dim', t.dim)
-  root.style.setProperty('--color-screen', t.screen)
-  root.style.setProperty('--glow-rgb', t.glow)
-  root.style.setProperty('--image-filter', t.image)
-}
+export const theme = (key: string) => themes.find((t) => t.key === key) ?? themes[0]
 
 export function setTheme(key: string) {
   if (!themes.some((t) => t.key === key)) return
   localStorage.setItem('theme', key)
-  applyTheme(key)
   listeners.forEach((fn) => fn())
 }
 
@@ -97,12 +84,12 @@ export const useTheme = () => useSyncExternalStore(subscribeTheme, currentTheme,
 export function xtermTheme(key: string) {
   const t = theme(key)
   return {
-    background: '#00000000',
+    background: t.bg,
     foreground: t.fg,
     cursor: t.fg,
-    cursorAccent: t.screen,
+    cursorAccent: t.bg,
     selectionBackground: t.fg,
-    selectionForeground: t.screen,
+    selectionForeground: t.bg,
     brightWhite: t.bold,
     brightBlack: t.dim,
   }

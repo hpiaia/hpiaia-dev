@@ -9,9 +9,14 @@ import {
   Silkscreen,
   Sometype_Mono,
   Ubuntu_Mono,
+  VT323,
   Workbench,
 } from 'next/font/google'
+import localFont from 'next/font/local'
 
+// IBM VGA 8x16 from the Ultimate Oldschool PC Font Pack by VileR, CC BY-SA 4.0
+const vga = localFont({ src: '../../public/fonts/IBM-VGA-8x16.woff', variable: '--font-vga' })
+const vt323 = VT323({ subsets: ['latin'], weight: '400', variable: '--font-vt323' })
 const doto = Doto({ subsets: ['latin'], weight: ['700', '900'], variable: '--font-doto' })
 const dotgothic16 = DotGothic16({ subsets: ['latin'], weight: '400', variable: '--font-dotgothic16' })
 const shareTechMono = Share_Tech_Mono({ subsets: ['latin'], weight: '400', variable: '--font-share-tech-mono' })
@@ -25,6 +30,8 @@ const novaMono = Nova_Mono({ subsets: ['latin'], weight: '400', variable: '--fon
 const sometypeMono = Sometype_Mono({ subsets: ['latin'], variable: '--font-sometype-mono' })
 
 export const fonts = [
+  { key: 'vga', label: 'IBM VGA 8x16', variable: '--font-vga', weight: 400, heroWeight: 400 },
+  { key: 'vt323', label: 'VT323', variable: '--font-vt323', weight: 400, heroWeight: 400 },
   { key: 'doto', label: 'Doto', variable: '--font-doto', weight: 700, heroWeight: 900 },
   { key: 'dotgothic16', label: 'DotGothic16', variable: '--font-dotgothic16', weight: 400, heroWeight: 400 },
   {
@@ -46,9 +53,11 @@ export const fonts = [
 
 export type FontKey = (typeof fonts)[number]['key']
 
-export const defaultFont: FontKey = 'ubuntu-mono'
+export const defaultFont: FontKey = 'vga'
 
 export const fontClassNames = [
+  vga,
+  vt323,
   doto,
   dotgothic16,
   shareTechMono,

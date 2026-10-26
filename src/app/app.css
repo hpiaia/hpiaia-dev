@@ -1,7 +1,9 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where([data-appearance='dark'], [data-appearance='dark'] *));
+
 @theme {
-  --font-sans: var(--font-mono), ui-monospace, monospace;
+  --font-sans: Tahoma, Verdana, 'Segoe UI', Geneva, sans-serif;
 
   --color-screen: #040a06;
   --color-ph: #9dff9f;
@@ -9,21 +11,223 @@
   --color-faint: #1c3a22;
 }
 
+/* Scheme colors, switched by data-appearance on <html> */
+@theme inline {
+  --color-face: var(--w-face);
+  --color-light: var(--w-light);
+  --color-shadow: var(--w-shadow);
+  --color-window: var(--w-window);
+  --color-ink: var(--w-ink);
+  --color-muted: var(--w-muted);
+  --color-select: var(--w-select);
+  --color-select-ink: var(--w-select-ink);
+  --color-desktop: var(--w-desktop);
+}
+
 :root {
   --font-mono: var(--font-ubuntu-mono);
   --weight-body: 400;
   --weight-hero: 400;
-  --zoom: 1;
   --glow-rgb: 120 255 140;
   --glow: 0 0 4px rgb(var(--glow-rgb) / 0.7);
   --image-filter: grayscale(1) invert(1) brightness(0.9) sepia(1) hue-rotate(65deg) saturate(3) contrast(1.1);
+
+  --w-face: #c0c0c0;
+  --w-hilite: #ffffff;
+  --w-light: #dfdfdf;
+  --w-shadow: #808080;
+  --w-dark: #0a0a0a;
+  --w-window: #ffffff;
+  --w-ink: #000000;
+  --w-muted: #808080;
+  --w-select: #000080;
+  --w-select-ink: #ffffff;
+  --w-title: linear-gradient(90deg, #000080, #1084d0);
+  --w-title-off: linear-gradient(90deg, #808080, #b5b5b5);
+  --w-title-ink-off: #d4d0c8;
+  --w-desktop: #008080;
+  color-scheme: light;
+}
+
+[data-appearance='dark'] {
+  --w-face: #3c3c3c;
+  --w-hilite: #6e6e6e;
+  --w-light: #505050;
+  --w-shadow: #1f1f1f;
+  --w-dark: #000000;
+  --w-window: #1e1e1e;
+  --w-ink: #ececec;
+  --w-muted: #9a9a9a;
+  --w-select: #2d5c9a;
+  --w-select-ink: #ffffff;
+  --w-title: linear-gradient(90deg, #14305c, #3a6cad);
+  --w-title-off: linear-gradient(90deg, #444, #5e5e5e);
+  --w-title-ink-off: #a8a8a8;
+  --w-desktop: #0e3535;
+  color-scheme: dark;
+}
+
+/* Two-tone bevels, the whole look hangs on these */
+@utility bevel {
+  box-shadow:
+    inset -1px -1px var(--w-dark),
+    inset 1px 1px var(--w-hilite),
+    inset -2px -2px var(--w-shadow),
+    inset 2px 2px var(--w-light);
+}
+
+@utility bevel-window {
+  box-shadow:
+    inset -1px -1px var(--w-dark),
+    inset 1px 1px var(--w-light),
+    inset -2px -2px var(--w-shadow),
+    inset 2px 2px var(--w-hilite);
+}
+
+@utility bevel-in {
+  box-shadow:
+    inset -1px -1px var(--w-hilite),
+    inset 1px 1px var(--w-shadow),
+    inset -2px -2px var(--w-light),
+    inset 2px 2px var(--w-dark);
+}
+
+@utility bevel-thin {
+  box-shadow:
+    inset -1px -1px var(--w-shadow),
+    inset 1px 1px var(--w-hilite);
+}
+
+@utility bevel-thin-in {
+  box-shadow:
+    inset -1px -1px var(--w-hilite),
+    inset 1px 1px var(--w-shadow);
+}
+
+@utility etched {
+  border: 1px solid var(--w-shadow);
+  box-shadow:
+    inset 1px 1px var(--w-hilite),
+    1px 1px var(--w-hilite);
+}
+
+@utility tab-on {
+  border-radius: 3px 3px 0 0;
+  box-shadow:
+    inset -1px 0 var(--w-dark),
+    inset 1px 1px var(--w-hilite),
+    inset -2px 0 var(--w-shadow),
+    inset 2px 2px var(--w-light);
+}
+
+@utility tab-off {
+  border-radius: 3px 3px 0 0;
+  box-shadow:
+    inset -1px 0 var(--w-dark),
+    inset 1px 1px var(--w-hilite),
+    inset -2px 0 var(--w-shadow),
+    inset 2px 2px var(--w-light),
+    inset 0 -1px var(--w-hilite);
+}
+
+@utility title-on {
+  background: var(--w-title);
+  color: #fff;
+}
+
+@utility title-off {
+  background: var(--w-title-off);
+  color: var(--w-title-ink-off);
 }
 
 html,
 body {
   height: 100%;
-  user-select: none;
-  -webkit-user-select: none;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: var(--w-desktop);
+  color: var(--w-ink);
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+
+::selection {
+  color: var(--w-select-ink);
+  background-color: var(--w-select);
+}
+
+/* Square scrollbars with beveled thumbs */
+.scroll-98 {
+  scrollbar-color: var(--w-face) var(--w-light);
+}
+
+.scroll-98::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+  background: repeating-conic-gradient(var(--w-face) 0 25%, var(--w-hilite) 0 50%) 0 0 / 2px 2px;
+}
+
+.scroll-98::-webkit-scrollbar-thumb {
+  background: var(--w-face);
+  box-shadow:
+    inset -1px -1px var(--w-dark),
+    inset 1px 1px var(--w-light),
+    inset -2px -2px var(--w-shadow),
+    inset 2px 2px var(--w-hilite);
+}
+
+.scroll-98::-webkit-scrollbar-corner {
+  background: var(--w-face);
+}
+
+/* Pressed taskbar buttons get the dithered fill */
+.dither {
+  background: repeating-conic-gradient(var(--w-face) 0 25%, var(--w-hilite) 0 50%) 0 0 / 2px 2px;
+}
+
+.focus-dotted:focus-visible {
+  outline: 1px dotted var(--w-ink);
+  outline-offset: -4px;
+}
+
+[data-dragging] iframe {
+  pointer-events: none;
+}
+
+/* Desktop wallpapers */
+.wallpaper {
+  background: var(--w-desktop);
+}
+
+[data-wallpaper='clouds'] .wallpaper {
+  background:
+    radial-gradient(ellipse 22% 9% at 18% 22%, rgb(255 255 255 / 0.95), transparent 70%),
+    radial-gradient(ellipse 16% 7% at 26% 19%, rgb(255 255 255 / 0.9), transparent 70%),
+    radial-gradient(ellipse 26% 10% at 72% 38%, rgb(255 255 255 / 0.9), transparent 70%),
+    radial-gradient(ellipse 14% 6% at 80% 34%, rgb(255 255 255 / 0.85), transparent 70%),
+    radial-gradient(ellipse 30% 11% at 40% 72%, rgb(255 255 255 / 0.85), transparent 70%),
+    radial-gradient(ellipse 18% 7% at 52% 68%, rgb(255 255 255 / 0.8), transparent 70%),
+    linear-gradient(to bottom, #2f62c8, #6fa0e8 60%, #9fc3f2);
+}
+
+[data-wallpaper='bliss'] .wallpaper {
+  background:
+    radial-gradient(ellipse 30% 8% at 70% 18%, rgb(255 255 255 / 0.7), transparent 70%),
+    radial-gradient(ellipse 90% 45% at 35% 105%, #3f9b2c 0 60%, transparent 61%),
+    radial-gradient(ellipse 80% 40% at 85% 110%, #4fae35 0 60%, transparent 61%),
+    radial-gradient(ellipse 120% 40% at 50% 100%, #2f7f22 0 55%, transparent 56%),
+    linear-gradient(to bottom, #2a64d6, #5c97ea 45%, #a9cdf5 70%);
+}
+
+[data-appearance='dark'][data-wallpaper='clouds'] .wallpaper,
+[data-appearance='dark'][data-wallpaper='bliss'] .wallpaper {
+  filter: brightness(0.55) saturate(0.9);
+}
+
+/* CRT layers over the desktop on the 3D monitor */
+.crt {
+  position: relative;
+  overflow: hidden;
   background: var(--color-screen);
   color: var(--color-ph);
   font-family: var(--font-mono), ui-monospace, monospace;
@@ -33,27 +237,17 @@ body {
     var(--glow),
     1px 0 0 rgba(255, 80, 80, 0.25),
     -1px 0 0 rgba(80, 160, 255, 0.25);
+  container-type: inline-size;
 }
 
-* {
+.crt * {
   scrollbar-width: none;
 }
 
-::-webkit-scrollbar {
-  display: none;
-}
-
-::selection {
+.crt ::selection {
   color: var(--color-screen);
   background-color: var(--color-ph);
   text-shadow: none;
-}
-
-.crt {
-  position: relative;
-  overflow: hidden;
-  background: var(--color-screen);
-  container-type: inline-size;
 }
 
 .crt-screen {
@@ -113,9 +307,29 @@ body {
   background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.7));
 }
 
-.crt--monitor .crt-layer,
-.crt--monitor .crt-screen {
-  border-radius: 0.5rem;
+/* The desktop on the 3D monitor keeps its own colors, with a lighter tube on top */
+.crt.crt--desk {
+  background: var(--w-desktop);
+  color: var(--w-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: auto;
+  text-shadow: none;
+}
+
+.crt--desk > .crt-screen {
+  filter: contrast(1.06) saturate(1.1);
+}
+
+.crt--desk > .crt-screen > .crt-scanlines {
+  opacity: 0.35;
+}
+
+.crt--desk > .crt-screen > .crt-grain {
+  opacity: 0.05;
+}
+
+.crt--desk > .crt-screen > .crt-vignette {
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.45));
 }
 
 @keyframes sweep {
@@ -196,35 +410,15 @@ body {
 }
 
 .term .xterm-viewport {
+  scrollbar-width: none;
+}
+
+.term .xterm-viewport {
   background: transparent !important;
-}
-
-.term .xterm-screen,
-.term .xterm-rows {
-  text-shadow: var(--glow);
-}
-
-.term .xterm-image-layer {
-  filter: var(--image-filter);
-  mix-blend-mode: screen;
 }
 
 .dim {
   color: var(--color-dim);
-}
-
-button {
-  color: var(--color-ph);
-  cursor: pointer;
-}
-
-button:hover:not(:disabled) {
-  color: white;
-}
-
-button:disabled {
-  color: var(--color-dim);
-  cursor: default;
 }
 
 .cursor {
@@ -247,8 +441,7 @@ button:disabled {
   .crt-sweep {
     display: none;
   }
-  html,
-  body {
+  .crt {
     text-shadow: var(--glow);
   }
 }
