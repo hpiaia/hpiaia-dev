@@ -8,7 +8,7 @@ import { FileIcon } from '@/components/desktop/icons'
 // Things the resume says were replaced along the way
 const files = [
   { name: 'crontab.bak', note: 'Replaced by durable Temporal workflows at Smartrr.' },
-  { name: 'gatsby-config.js', note: 'Migrated the storefront to Next.js. Build times cut by 80%.' },
+  { name: 'gatsby-config.js', note: 'Migrated the Shopify app frontend to Next.js. Build times cut by 80%.' },
   { name: 'jest.config.js', note: 'Moved every suite to Vitest with SWC. Tests run 75% faster.' },
   { name: 'terminal-only-site.zip', note: 'The previous hpiaia.dev. It still runs: open the Terminal.' },
 ]

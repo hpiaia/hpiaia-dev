@@ -7,6 +7,7 @@ const header = 'sticky top-0 bg-face px-2 py-0.5 text-left font-normal bevel'
 export function Skills() {
   const rows = [
     ...resume.skills.map(([area, tools]) => ({ area, tools, kind: 'Technical' })),
+    ...resume.education.map((e) => ({ area: e.field, tools: `${e.school}, ${e.from}–${e.to}`, kind: 'Education' })),
     ...resume.languages.map(([lang, level]) => ({ area: lang, tools: level, kind: 'Spoken language' })),
   ]
   return (

@@ -1,3 +1,4 @@
+import { resume } from '@/content/resume'
 import { site } from '@/content/site'
 
 // A tiny C: drive. Paths are stored without the drive, segments joined by backslashes: '' is C:\
@@ -24,6 +25,11 @@ const dirs: Record<string, Entry[]> = {
     { kind: 'file', name: 'ABOUT.TXT', lines: site.about },
     { kind: 'file', name: 'SKILLS.TXT', lines: site.skills.map(([k, v]) => `${k.padEnd(12)}${v}`) },
     { kind: 'file', name: 'NOW.TXT', lines: site.now },
+    {
+      kind: 'file',
+      name: 'SCHOOL.TXT',
+      lines: resume.education.map((e) => `${e.field.toLowerCase()} · ${e.school.toLowerCase()}, ${e.from}-${e.to}`),
+    },
     { kind: 'dir', name: 'LINKS' },
   ],
   [`${home}\\LINKS`]: links,
