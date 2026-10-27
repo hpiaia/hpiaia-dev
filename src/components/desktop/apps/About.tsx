@@ -3,6 +3,15 @@ import { resume } from '@/content/resume'
 import { site } from '@/content/site'
 import { open } from '@/lib/windows'
 
+// Email first: it is how people reach me. rel="me" ties the profiles back to this site
+const names: Record<string, string> = { email: 'Email', github: 'GitHub', linkedin: 'LinkedIn' }
+const links = [
+  ...['email', 'github', 'linkedin'].flatMap((label) =>
+    site.links.filter((l) => l.label === label).map((l) => ({ label: names[label], href: l.href })),
+  ),
+  { label: 'Site source', href: site.source },
+]
+
 export function About() {
   return (
     <>
@@ -10,7 +19,8 @@ export function About() {
         <Button primary onClick={() => open('work')}>
           See my work
         </Button>
-        <Button onClick={() => open('cv')}>Resume</Button>
+        {/* Straight to the pdf: phones open it in their own viewer */}
+        <Button href="/resume.pdf">Resume</Button>
         <Button onClick={() => open('contact')}>Say hi</Button>
       </div>
       <Sunken className="min-h-0 flex-1">
@@ -24,6 +34,19 @@ export function About() {
                 <p className="text-muted">
                   {resume.role} · {resume.contacts.find((c) => c.key === 'Location')?.text}
                 </p>
+                <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                  {links.map((l) => (
+                    <li key={l.label}>
+                      <a
+                        href={l.href}
+                        {...(l.href.startsWith('https://') && { target: '_blank', rel: 'me noreferrer' })}
+                        className="text-[#0000ee] underline dark:text-[#8ab4ff]"
+                      >
+                        {l.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
             {site.bio.map((p) => (

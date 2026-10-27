@@ -35,10 +35,12 @@ const gameShortcuts: Shortcut[] = games.map((g) => ({
   id: g.slug,
   label: g.label,
   icon: (
+    // Low priority keeps React from preloading them ahead of the page's own content
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={g.icon ?? g.cover}
       alt=""
+      fetchPriority="low"
       className={g.icon ? 'size-[32px]' : 'h-[40px] w-[30px] border border-black object-cover shadow-[1px_1px_0_#000]'}
     />
   ),
@@ -184,7 +186,9 @@ export function Desktop({ initial }: Props) {
     )
 
   return (
-    <div className="relative isolate flex h-full w-full flex-col overflow-hidden text-ink select-none">
+    // The desktop is a size container: compact layouts switch in CSS, so the first paint already matches what
+    // the window manager picks once it measures (on phones that used to shift every window after load)
+    <div className="@container/desk relative isolate flex h-full w-full flex-col overflow-hidden text-ink select-none">
       <div aria-hidden className="wallpaper absolute inset-0 -z-10" />
       <div
         ref={(el) => {
@@ -194,26 +198,6 @@ export function Desktop({ initial }: Props) {
         className="relative isolate min-h-0 flex-1"
         onPointerDown={(e) => e.target === e.currentTarget && setSelected(null)}
       >
-        <div
-          className={`flex h-full content-start items-start gap-1 p-1 ${compact ? 'flex-wrap pointer-events-none [&_li]:pointer-events-auto' : ''}`}
-          onPointerDown={(e) => e.target === e.currentTarget && setSelected(null)}
-        >
-          {[appShortcuts, gameShortcuts].map((group, i) => (
-            <ul
-              key={i}
-              className={
-                compact
-                  ? 'contents'
-                  : `flex h-full flex-col gap-1 ${i === 0 ? 'flex-wrap content-start' : 'ml-auto flex-wrap-reverse content-start'}`
-              }
-              onPointerDown={(e) => e.target === e.currentTarget && setSelected(null)}
-            >
-              {group.map((s) => (
-                <DesktopIcon key={s.id} shortcut={s} selected={selected === s.id} onSelect={() => setSelected(s.id)} />
-              ))}
-            </ul>
-          ))}
-        </div>
         {shown.map((win) =>
           win.key === 'winamp' ? (
             <Winamp key={win.key} win={win} compact={compact} />
@@ -226,11 +210,29 @@ export function Desktop({ initial }: Props) {
               compact={compact}
               layer={layer}
               pending={booting}
+              primary={win.key === initial.key}
             >
               <AppView win={win} focused={booting || focused === win.key} />
             </Window>
           ),
         )}
+        {/* After the windows in the source so the page's content comes first; the windows still paint on top */}
+        <div
+          className="flex h-full content-start items-start gap-1 p-1 @max-[639px]/desk:pointer-events-none @max-[639px]/desk:flex-wrap @max-[639px]/desk:[&_li]:pointer-events-auto"
+          onPointerDown={(e) => e.target === e.currentTarget && setSelected(null)}
+        >
+          {[appShortcuts, gameShortcuts].map((group, i) => (
+            <ul
+              key={i}
+              className={`flex h-full flex-col gap-1 @max-[639px]/desk:contents ${i === 0 ? 'flex-wrap content-start' : 'ml-auto flex-wrap-reverse content-start'}`}
+              onPointerDown={(e) => e.target === e.currentTarget && setSelected(null)}
+            >
+              {group.map((s) => (
+                <DesktopIcon key={s.id} shortcut={s} selected={selected === s.id} onSelect={() => setSelected(s.id)} />
+              ))}
+            </ul>
+          ))}
+        </div>
         {finding && <Search container={layerElement} onClose={() => setFinding(false)} />}
         <MessageBox />
       </div>

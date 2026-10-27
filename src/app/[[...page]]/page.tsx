@@ -40,7 +40,7 @@ export default async function Home({ params }: Props) {
   const route = parsePath((await params).page) ?? { key: 'about' as const }
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(route.key === 'about') }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(route.key, route.sub) }} />
       <Computer initial={route} />
     </>
   )

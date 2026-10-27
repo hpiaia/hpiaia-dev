@@ -2,7 +2,7 @@
 
 import { appIcons, ui } from '@/components/desktop/icons'
 import { localPoint } from '@/lib/pointer'
-import { ownHeading } from '@/lib/seo'
+import { ownHeading, pageHeading } from '@/lib/seo'
 import { close, focus, minimize, minSize, place, type Rect, toggleMaximize, type Win } from '@/lib/windows'
 
 type Edge = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw'
@@ -15,6 +15,8 @@ type Props = React.PropsWithChildren<{
   layer: React.RefObject<HTMLDivElement | null>
   // Rendered before the desktop is measured: centered with CSS until the window manager takes over
   pending?: boolean
+  // The window the URL points at: it carries the page's h1 when the app has no heading of its own
+  primary?: boolean
 }>
 
 const edges: [Edge, string][] = [
@@ -71,7 +73,7 @@ function Control({ label, onClick, children }: React.PropsWithChildren<{ label: 
   )
 }
 
-export function Window({ win, title, focused, compact, layer, pending, children }: Props) {
+export function Window({ win, title, focused, compact, layer, pending, primary, children }: Props) {
   const full = compact || win.maximized
   const { key } = win
 
@@ -105,7 +107,6 @@ export function Window({ win, title, focused, compact, layer, pending, children 
   }
 
   const Icon = appIcons[key]
-  const Title = ownHeading.includes(key) ? 'p' : 'h1'
 
   return (
     <section
@@ -117,7 +118,7 @@ export function Window({ win, title, focused, compact, layer, pending, children 
         zIndex: win.z,
         ...(full ? { inset: 0 } : pending ? centered(win) : { left: win.x, top: win.y, width: win.w, height: win.h }),
       }}
-      className={`absolute flex-col bg-face p-[3px] bevel-window ${win.minimized ? 'hidden' : 'flex'}`}
+      className={`absolute flex-col bg-face p-[3px] bevel-window @max-[639px]/desk:inset-0! @max-[639px]/desk:size-auto! ${win.minimized ? 'hidden' : 'flex'}`}
     >
       <header
         onPointerDown={(e) => {
@@ -133,9 +134,9 @@ export function Window({ win, title, focused, compact, layer, pending, children 
         className={`flex h-[22px] shrink-0 items-center gap-[3px] pr-[3px] pl-[3px] select-none ${focused ? 'title-on' : 'title-off'}`}
       >
         <Icon className="size-[16px] shrink-0" />
-        <Title className="line-clamp-1 flex-1 font-bold tracking-wide">{title}</Title>
+        <p className="line-clamp-1 flex-1 font-bold tracking-wide">{title}</p>
         {!compact && (
-          <span className="flex">
+          <span className="flex @max-[639px]/desk:hidden">
             <Control label="Minimize" onClick={() => minimize(key)}>
               <ui.minimize />
             </Control>
@@ -150,6 +151,7 @@ export function Window({ win, title, focused, compact, layer, pending, children 
           </Control>
         </span>
       </header>
+      {primary && !ownHeading.includes(key) && <h1 className="sr-only">{pageHeading(key, win.sub)}</h1>}
       <div className="@container relative flex min-h-0 flex-1 flex-col pt-[2px]">{children}</div>
       {!full &&
         edges.map(([edge, cls]) => (

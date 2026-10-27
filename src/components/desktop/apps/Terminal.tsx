@@ -36,8 +36,10 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
   const hostRef = useRef<HTMLDivElement>(null)
   const termRef = useRef<Xterm | null>(null)
   const handlers = useRef({ onExit, onApp })
+  const activeRef = useRef(active)
   useEffect(() => {
     handlers.current = { onExit, onApp }
+    activeRef.current = active
   })
 
   useEffect(() => {
@@ -159,7 +161,8 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
       if (disposed) return
       term.open(host)
       resize()
-      term.focus()
+      // Only the window in front gets the keyboard: on the home page the prompt boots behind About
+      if (activeRef.current) term.focus()
 
       writeLines(bootLines())
       for (const command of startup) {

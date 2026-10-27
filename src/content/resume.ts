@@ -4,9 +4,9 @@ export const resume = {
   contacts: [
     { key: 'Email', text: 'betopiaia@gmail.com', href: 'mailto:betopiaia@gmail.com' },
     { key: 'Phone', text: '+55 55 99928-6765' },
-    { key: 'LinkedIn', text: 'linkedin.com/in/hpiaia', href: 'https://linkedin.com/in/hpiaia' },
+    { key: 'LinkedIn', text: 'linkedin.com/in/hpiaia', href: 'https://www.linkedin.com/in/hpiaia' },
     { key: 'GitHub', text: 'github.com/hpiaia', href: 'https://github.com/hpiaia' },
-    { key: 'Website', text: 'hpiaia.dev', href: 'https://hpiaia.dev' },
+    { key: 'Website', text: 'hpiaia.dev', href: 'https://www.hpiaia.dev' },
     { key: 'Location', text: 'Santa Catarina, Brazil' },
   ],
   about:
@@ -19,6 +19,8 @@ export const resume = {
         { name: 'Dor', url: 'https://www.getdor.com' },
       ],
       slug: 'constellation-network',
+      // One line for search snippets and the work overview
+      summary: 'built the cross-chain bridge to Ethereum, Base and Ink, and MCP servers on the Dor API.',
       from: '2024-04',
       to: 'now',
       bullets: [
@@ -33,6 +35,7 @@ export const resume = {
       title: 'Senior Full Stack Engineer',
       companies: [{ name: 'Smartrr', url: 'https://smartrr.com' }],
       slug: 'smartrr',
+      summary: 'moved the Shopify app to Next.js (80% faster builds), Jest to Vitest and cron jobs to Temporal.',
       from: '2023-10',
       to: '2024-03',
       bullets: [
@@ -45,6 +48,7 @@ export const resume = {
       title: 'Senior Full Stack Engineer',
       companies: [{ name: 'McGraw Hill', url: 'https://www.mheducation.com' }],
       slug: 'mcgraw-hill',
+      summary: 'ePub textbook apps for students, with PHP, Angular and Go search on OpenSearch, on AWS.',
       from: '2021-08',
       to: '2023-10',
       bullets: [
@@ -57,6 +61,7 @@ export const resume = {
       title: 'Full Stack & DevOps Engineer',
       companies: [{ name: 'RankMyApp', url: 'https://rankmyapp.com' }],
       slug: 'rankmyapp',
+      summary: 'ran 100+ dockerized microservices on Kubernetes, with their CI/CD and observability.',
       from: '2020-07',
       to: '2021-08',
       bullets: [
@@ -70,6 +75,7 @@ export const resume = {
       title: 'Full Stack & Lead Developer',
       companies: [{ name: 'Questor Sistemas', url: 'https://questor.com.br' }],
       slug: 'questor-sistemas',
+      summary: 'a crawler doing 100,000+ jobs a day on AWS Lambda and an internal C# / .NET Core framework.',
       from: '2017-12',
       to: '2019-07',
       bullets: [
@@ -83,6 +89,7 @@ export const resume = {
       title: 'Full Stack & Mobile Developer',
       companies: [{ name: 'iBR Tecnologia', url: 'https://ibrsoft.com' }],
       slug: 'ibr-tecnologia',
+      summary: 'web and mobile apps in Laravel, React and React Native that raised revenue per customer up to 50%.',
       from: '2016-06',
       to: '2017-12',
       bullets: [
@@ -94,6 +101,7 @@ export const resume = {
       title: 'Full Stack Developer',
       companies: [{ name: 'Pixels' }],
       slug: 'pixels',
+      summary: "website layouts in Laravel and Vue.js, built from designers' high-fidelity prototypes.",
       from: '2013-01',
       to: '2016-06',
       bullets: [

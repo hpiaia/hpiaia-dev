@@ -15,21 +15,21 @@ export const site = {
   name: 'Humberto Piaia',
   title: 'Humberto Piaia - Senior Full Stack Engineer',
   description:
-    'Senior full stack engineer in Brazil with 12+ years building web products end to end: TypeScript, React, Node.js, Go and AWS. Work history, resume and contact.',
+    'Humberto Piaia is a senior full stack engineer in Brazil with 12+ years shipping TypeScript, React, Node.js, Go and AWS products for remote US teams.',
+  // Bump when the resume or the site copy changes: it feeds the sitemap's lastmod and the schema's dateModified
+  updated: '2026-10-27',
   user: 'hpiaia',
   version: '4.10',
   host: 'dev',
   // hpiaia97 counts its uptime and copyright from this year
   born: 1997,
   avatar: '/avatar.jpg',
-  // From LinkedIn; the year count is computed so it never goes stale
+  // The opening line names me and the role, so it reads as a summary when quoted out of context
   bio: [
-    'I am a full stack engineer with advanced expertise in TypeScript, PHP, C# and DevOps.',
+    "I'm Humberto Piaia, a senior full stack engineer in Santa Catarina, Brazil. Since 2021 I've worked remotely with US teams, writing the product code and running the infrastructure under it.",
     "But let's rewind a bit, shall we?",
-    `My journey began in 2010, as a curious teenager experimenting with creating games and servers. To my surprise, things went surprisingly well and in 2012 I launched my first game server (written in C), which quickly attracted over a hundred active players. Over the next couple of years, I realized this wasn't just a hobby. This was my passion and I could do that for the rest of my life. Indeed, that's what I have been doing for the past ${new Date().getFullYear() - 2012} years.`,
-    "Over all those years, I've transitioned from designing website layouts to developing robust web applications using TypeScript and C#, aiding businesses in expanding their customer base and revenue.",
-    "My expertise also extends to DevOps; I've architected and maintained clusters hosting over 100 dockerized microservices with Kubernetes, Docker and Terraform.",
-    'Now, I specialize in optimizing software performance using advanced technologies like TypeScript, Go, and Rust.',
+    'My journey began in 2010, as a curious teenager experimenting with creating games and servers. To my surprise, things went well and in 2012 I launched my first game server (a With Your Destiny server, written in C), which quickly attracted over a hundred active players. It ran on the PC in my bedroom, then on a Windows VPS I rented, and it crashed a lot, mostly because I was learning to write code while a hundred people were playing on it. Real people, on something I built, that I had to keep up. I never got over that.',
+    "That's still what I do. The stacks changed, from website layouts to web apps, APIs, clusters and infrastructure, but the job is the same: build the thing, then be the one who keeps it running.",
   ],
   credits: [
     { what: 'window manager idea', title: 'posthog.com', url: 'https://posthog.com' },
@@ -94,7 +94,8 @@ export const site = {
   links: [
     { label: 'resume', href: '/resume.pdf' },
     { label: 'github', href: 'https://github.com/hpiaia' },
-    { label: 'linkedin', href: 'https://linkedin.com/in/hpiaia' },
+    { label: 'linkedin', href: 'https://www.linkedin.com/in/hpiaia' },
+    { label: 'x', href: 'https://x.com/hpiaiadev' },
     { label: 'soundcloud', href: 'https://soundcloud.com/sprnv4' },
     { label: 'email', href: 'mailto:betopiaia@gmail.com' },
   ] satisfies LinkRef[],
