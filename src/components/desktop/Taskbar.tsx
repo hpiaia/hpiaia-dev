@@ -100,7 +100,7 @@ export function Taskbar({ compact, onFind, onShutdown }: Props) {
           children: games.map((g) => ({
             label: g.title,
             // eslint-disable-next-line @next/next/no-img-element
-            icon: <img src={g.icon ?? g.cover} alt="" className={g.icon ? 'size-[16px]' : 'h-4 w-3 object-cover'} />,
+            icon: <img src={g.icon} alt="" className="size-[16px]" />,
             run: () => launchGame(g),
           })),
         },

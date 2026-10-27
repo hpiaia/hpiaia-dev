@@ -3,7 +3,7 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 export const companies = (job: { companies: { name: string }[] }) => job.companies.map((c) => c.name).join(' & ')
 
 // Resume dates are "YYYY-MM" or "now"
-export const month = (ym: string) => (ym === 'now' ? 'Present' : `${months[Number(ym.slice(5)) - 1]} ${ym.slice(0, 4)}`)
+const month = (ym: string) => (ym === 'now' ? 'Present' : `${months[Number(ym.slice(5)) - 1]} ${ym.slice(0, 4)}`)
 export const year = (ym: string) => (ym === 'now' ? 'now' : ym.slice(0, 4))
 export const period = (from: string, to: string) => `${month(from)} – ${month(to)}`
 

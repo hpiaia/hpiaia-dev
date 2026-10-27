@@ -14,7 +14,7 @@ import { launchGame } from '@/lib/dialogs'
 import { companies, year } from '@/lib/utils'
 import { open } from '@/lib/windows'
 
-type Result = { label: string; detail: string; app?: AppKey; cover?: string; square?: boolean; run: () => void }
+type Result = { label: string; detail: string; app?: AppKey; image?: string; run: () => void }
 
 const results: Result[] = [
   ...apps.map((a) => ({ label: a.label, detail: a.title, app: a.key, run: () => open(a.key) })),
@@ -33,8 +33,7 @@ const results: Result[] = [
   ...games.map((g) => ({
     label: g.title,
     detail: 'Game, needs its CD',
-    cover: g.icon ?? g.cover,
-    square: !!g.icon,
+    image: g.icon,
     run: () => launchGame(g),
   })),
   ...site.links.map((l) => ({
@@ -115,9 +114,9 @@ export function Search({ container, onClose }: { container: HTMLElement | null; 
         <Command.List className="scroll-98 h-full overflow-y-auto">
           {results.map((r) => {
             const Icon = r.app ? appIcons[r.app] : FileIcon
-            const icon = r.cover ? (
+            const icon = r.image ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={r.cover} alt="" className={`h-[16px] shrink-0 object-cover ${r.square ? 'w-[16px]' : 'w-3'}`} />
+              <img src={r.image} alt="" className="size-[16px] shrink-0" />
             ) : (
               <Icon className="size-[16px] shrink-0" />
             )

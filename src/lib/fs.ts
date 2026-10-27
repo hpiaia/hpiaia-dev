@@ -7,7 +7,7 @@ import { plain } from '@/lib/markdown'
 import { companies, period, wrap } from '@/lib/utils'
 
 // What `start` does with a file: open an app (at a sub page) or try to run a game
-export type Launch = { app: AppKey; sub?: string } | { game: Game }
+type Launch = { app: AppKey; sub?: string } | { game: Game }
 
 // A tiny C: drive. Paths are stored without the drive, segments joined by backslashes: '' is C:\
 // `long` is the Windows long name, shown by dir; `alias` is what `start` also answers to

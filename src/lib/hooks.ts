@@ -3,7 +3,7 @@ import { useEffect, useSyncExternalStore } from 'react'
 import { keyDown, keyUp, warm } from '@/lib/keys'
 import { getSetting } from '@/lib/settings'
 
-export function useMedia(query: string) {
+function useMedia(query: string) {
   return useSyncExternalStore(
     (callback) => {
       const media = window.matchMedia(query)

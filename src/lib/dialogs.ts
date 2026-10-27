@@ -7,7 +7,7 @@ export type Message = { title: string; text: string[]; retry?: () => void }
 
 export const useDialogs = create<{ message: Message | null }>()(() => ({ message: null }))
 
-export function showMessage(message: Message) {
+function showMessage(message: Message) {
   errorChime()
   useDialogs.setState({ message })
 }

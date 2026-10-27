@@ -240,7 +240,7 @@ function JobView({ job, first }: { job: (typeof resume.jobs)[0]; first: boolean 
   )
 }
 
-export function Resume() {
+function Resume() {
   const [first, ...rest] = resume.name.split(' ')
   return (
     <Document

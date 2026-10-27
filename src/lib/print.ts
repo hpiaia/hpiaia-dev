@@ -1,6 +1,6 @@
 import { Color, type MeshStandardMaterial } from 'three'
 
-export const printFinish = {
+const printFinish = {
   saturation: 0.68,
   contrast: 0.84,
   paper: '#48423a',

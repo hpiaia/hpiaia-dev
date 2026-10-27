@@ -5,12 +5,12 @@ import { defaultFont, fonts } from '@/lib/fonts'
 import { defaultMonitorFilter, monitorFilters } from '@/lib/monitor'
 import { settingsKey, wallpapers } from '@/lib/settings-script'
 
-export const appearances = ['light', 'dark'] as const
-export const views = ['screen', 'desk'] as const
+const appearances = ['light', 'dark'] as const
+const views = ['screen', 'desk'] as const
 
-export type Appearance = (typeof appearances)[number]
+type Appearance = (typeof appearances)[number]
 export type Wallpaper = (typeof wallpapers)[number]
-export type View = (typeof views)[number]
+type View = (typeof views)[number]
 
 type Settings = {
   appearance: Appearance

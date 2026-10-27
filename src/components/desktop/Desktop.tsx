@@ -37,12 +37,7 @@ const gameShortcuts: Shortcut[] = games.map((g) => ({
   icon: (
     // Low priority keeps React from preloading them ahead of the page's own content
     // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={g.icon ?? g.cover}
-      alt=""
-      fetchPriority="low"
-      className={g.icon ? 'size-[32px]' : 'h-[40px] w-[30px] border border-black object-cover shadow-[1px_1px_0_#000]'}
-    />
+    <img src={g.icon} alt="" fetchPriority="low" className="size-[32px]" />
   ),
   run: () => launchGame(g),
 }))

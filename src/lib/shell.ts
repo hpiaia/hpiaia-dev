@@ -18,7 +18,7 @@ import {
 import { fonts } from '@/lib/fonts'
 import { getSetting } from '@/lib/settings'
 
-export type Action =
+type Action =
   | { type: 'clear' }
   | { type: 'open'; href: string }
   | { type: 'font'; key: string }

@@ -12,7 +12,7 @@ export const siteUrl = 'https://www.hpiaia.dev'
 
 const clip = (text: string) => clipTo(text, 158)
 
-export const findJob = (slug?: string) => resume.jobs.find((j) => j.slug === slug)
+const findJob = (slug?: string) => resume.jobs.find((j) => j.slug === slug)
 
 // Search titles stay plain; the retro window titles ("About Me - WordPad") are for the desktop only
 const titles: Record<AppKey, string> = {

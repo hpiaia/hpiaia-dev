@@ -27,7 +27,7 @@ monitor of a retro gaming desk in a 3D bedroom scene.
 - On the 3D monitor, the four left buttons tint the screen like a green, blue or amber phosphor monitor (gray is
   unfiltered), and the power button turns the screen off to reveal reflective glass and the bedroom panorama.
 - Game packaging uses custom artwork with a faded-print finish tuned in `src/lib/print.ts`. The same games sit on the
-  right of the desktop with their box art; opening one asks for a CD that is not in drive D:.
+  right of the desktop with their icons; opening one asks for a CD that is not in drive D:.
 - Winamp is [Webamp](https://github.com/captbaritone/webamp) drawn straight onto the desktop, playing the albums on
   the bedroom wall (`src/content/albums.ts`) through a hidden YouTube player that stands in for Webamp's audio engine
   (`src/components/desktop/apps/winamp/media.ts`).

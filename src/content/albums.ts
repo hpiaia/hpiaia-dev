@@ -1,6 +1,6 @@
 // "Gardenia" has no official studio upload, so it uses the same fan upload YouTube's own album playlist does.
 // Frogstomp's "Pure Massacre" only has the music video in the album playlist, so it uses the official single audio.
-export type Track = { title: string; youtube: string; seconds: number }
+type Track = { title: string; youtube: string; seconds: number }
 export type Album = { slug: string; artist: string; title: string; year: number; cover: string; tracks: Track[] }
 
 export const albums: Album[] = [
