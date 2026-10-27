@@ -74,7 +74,7 @@ export const site = {
       what: 'games',
       title: 'SteamGridDB',
       url: 'https://www.steamgriddb.com',
-      note: 'box art and icons © their publishers; the Metin2 icon is fan-made',
+      note: 'box art and icons © their publishers',
     },
     {
       what: 'wallpapers',
