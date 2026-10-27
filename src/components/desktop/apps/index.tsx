@@ -8,19 +8,24 @@ import { Credits } from '@/components/desktop/apps/Credits'
 import { Cv } from '@/components/desktop/apps/Cv'
 import { Display } from '@/components/desktop/apps/Display'
 import { Music } from '@/components/desktop/apps/Music'
-import { companies, Sunken } from '@/components/desktop/apps/shared'
+import { Sunken } from '@/components/desktop/apps/shared'
 import { Skills } from '@/components/desktop/apps/Skills'
 import { Trash } from '@/components/desktop/apps/Trash'
 import { Work } from '@/components/desktop/apps/Work'
+import { findAlbum } from '@/content/albums'
 import { resume } from '@/content/resume'
 import { app } from '@/lib/apps'
+import { companies } from '@/lib/utils'
 import { close, open, type Win } from '@/lib/windows'
 
-const Terminal = dynamic(() => import('@/components/Terminal'), { ssr: false })
+const Terminal = dynamic(() => import('@/components/desktop/apps/Terminal'), { ssr: false })
 
 export function windowTitle(win: Win) {
   const job = win.key === 'work' && resume.jobs.find((j) => j.slug === win.sub)
-  return job ? `Exploring - ${companies(job)}` : app(win.key).title
+  if (job) return `Exploring - ${companies(job)}`
+  const album = win.key === 'winamp' && findAlbum(win.sub)
+  if (album) return `Winamp - ${album.artist} - ${album.title}`
+  return app(win.key).title
 }
 
 export function AppView({ win, focused }: { win: Win; focused: boolean }) {
@@ -34,7 +39,7 @@ export function AppView({ win, focused }: { win: Win; focused: boolean }) {
     case 'terminal':
       return (
         <Sunken className="min-h-0 flex-1 !bg-black">
-          <Terminal active={focused} onExit={() => close('terminal')} onApp={open} />
+          <Terminal active={focused} onExit={() => close('terminal')} onApp={(key, sub) => open(key, sub)} />
         </Sunken>
       )
     case 'skills':
@@ -43,6 +48,8 @@ export function AppView({ win, focused }: { win: Win; focused: boolean }) {
       return <Contact />
     case 'music':
       return <Music />
+    case 'winamp':
+      return null
     case 'credits':
       return <Credits />
     case 'display':

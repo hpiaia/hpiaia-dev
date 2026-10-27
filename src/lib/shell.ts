@@ -1,8 +1,22 @@
 import { site } from '@/content/site'
+import { wallpaperNames } from '@/lib/settings-script'
 import { type AppKey, apps } from '@/lib/apps'
 import { bold, dim, link } from '@/lib/ansi'
-import { completions, contents, display, home, isDir, links, list, normalize, resolve, size } from '@/lib/fs'
+import {
+  completions,
+  contents,
+  display,
+  type Entry,
+  home,
+  isDir,
+  links,
+  list,
+  normalize,
+  resolve,
+  size,
+} from '@/lib/fs'
 import { fonts } from '@/lib/fonts'
+import { getSetting } from '@/lib/settings'
 import { themes } from '@/lib/theme'
 
 export type Action =
@@ -14,7 +28,8 @@ export type Action =
   | { type: 'sound'; on: boolean }
   | { type: 'cd'; path: string }
   | { type: 'theme'; key: string }
-  | { type: 'app'; key: AppKey }
+  | { type: 'app'; key: AppKey; sub?: string }
+  | { type: 'game'; slug: string }
   | { type: 'exit' }
 export type Result = { out: string[]; action?: Action }
 export type Context = { origin: string; cwd: string }
@@ -22,6 +37,7 @@ export type Context = { origin: string; cwd: string }
 type Command = { usage: string; dos?: boolean; run: (args: string[], ctx: Context) => Result }
 
 const absolute = (href: string, ctx: Context) => (href.startsWith('/') ? `${ctx.origin}${href}` : href)
+const version = `hpiaia97 [Version ${site.version}]`
 const years = () => new Date().getFullYear() - site.born
 const unixPath = (path: string) => `/c/${path.replace(/\\/g, '/').toLowerCase()}`.replace(/\/$/, '')
 
@@ -32,14 +48,34 @@ function stamp() {
   return `${pad(d.getMonth() + 1)}-${pad(d.getDate())}-${String(d.getFullYear()).slice(2)}  ${String(hour).padStart(2)}:${pad(d.getMinutes())}${d.getHours() < 12 ? 'a' : 'p'}`
 }
 
+// `start` looks in the current folder first, then in the home folders, like a tiny PATH
+const searched = ['', 'LINKS', 'WORK', 'GAMES', 'MUSIC']
+
+function launch(entry: Entry, ctx: Context): Result | undefined {
+  if (entry.kind === 'link') {
+    const href = absolute(entry.href, ctx)
+    return { out: [dim(`opening ${href}`)], action: { type: 'open', href } }
+  }
+  if (entry.kind !== 'file' || !entry.launch) return
+  if ('game' in entry.launch)
+    return {
+      out: ['', 'Not ready reading drive D', `Please insert the ${entry.launch.game.title} CD-ROM.`, ''],
+      action: { type: 'game', slug: entry.launch.game.slug },
+    }
+  const { app: key, sub } = entry.launch
+  return { out: [dim(`opening ${entry.long ?? entry.name}`)], action: { type: 'app', key, sub } }
+}
+
 function start(name: string, ctx: Context, verb: string): Result {
   const key = name.toLowerCase()
   const target = apps.find((a) => a.key === key || a.label.toLowerCase() === key)
   if (target) return { out: [dim(`opening ${target.title}`)], action: { type: 'app', key: target.key } }
-  const found = resolve(name.replace(/^links[\\/]/i, `~\\LINKS\\`), ctx.cwd) ?? resolve(`~\\LINKS\\${name}`, ctx.cwd)
-  if (found?.entry?.kind !== 'link') return { out: [`${verb}: ${name}: unknown link or app. try: dir links, apps`] }
-  const href = absolute(found.entry.href, ctx)
-  return { out: [dim(`opening ${href}`)], action: { type: 'open', href } }
+  for (const dir of searched) {
+    const found = resolve(dir ? `~\\${dir}\\${name}` : name, ctx.cwd)
+    const result = found?.entry && launch(found.entry, ctx)
+    if (result) return result
+  }
+  return { out: [`${verb}: ${name}: not found. try: apps, dir links, dir games, dir music`] }
 }
 
 function changeDir(path: string, ctx: Context, dos: boolean): Result {
@@ -61,16 +97,19 @@ function systemInfo(): Result {
     out: [
       bold(`${site.user}@${site.host}`),
       dim('----------'),
-      row('os', 'hpiaia97'),
+      row('os', `hpiaia97 ${site.version}`),
       row('kernel', 'next 16 · react 19'),
       row('shell', 'command prompt on xterm.js'),
-      row('display', 'hdb rg, crt display'),
+      row('wm', 'hpiaia97 desktop'),
+      row('scheme', getSetting('appearance') === 'dark' ? 'night' : 'standard'),
+      row('wallpaper', wallpaperNames[getSetting('wallpaper')].toLowerCase()),
+      row('view', getSetting('view') === 'desk' ? '3d desk, crt monitor' : 'screen'),
+      row('music', 'winamp 2.x (webamp)'),
       row('uptime', `${years()} years`),
     ],
   }
 }
 
-// DOS commands on top, the unix set kept as it was. Both work on the same drive
 const commands: Record<string, Command> = {
   help: {
     usage: 'list commands',
@@ -87,7 +126,7 @@ const commands: Record<string, Command> = {
           dim('unix commands:'),
           ...rows(false),
           '',
-          dim('tab completes, arrows browse history. try: type about.txt or cat about.txt'),
+          dim('tab completes, arrows browse history. try: type about.txt, dir games, start dirt'),
         ],
       }
     },
@@ -113,7 +152,8 @@ const commands: Record<string, Command> = {
             const label = `${name.padEnd(8)} ${ext.padEnd(3)}`
             const shown =
               e.kind === 'link' ? link(absolute(e.href, ctx), label) : e.kind === 'dir' ? bold(label) : label
-            return `${shown}  ${column}  ${dim(stamp())}`
+            const long = e.kind === 'file' && e.long ? `  ${e.long}` : ''
+            return `${shown}  ${column}  ${dim(stamp())}${long}`
           }),
           `${String(files.length).padStart(8)} file(s) ${bytes.toLocaleString('en').padStart(14)} bytes`,
           `${String(entries.length - files.length).padStart(8)} dir(s)  ${'640,000'.padStart(14)} bytes free`,
@@ -155,10 +195,14 @@ const commands: Record<string, Command> = {
       return { out }
     },
   },
-  start: { usage: 'open an app or link', dos: true, run: ([name = ''], ctx) => start(name, ctx, 'start') },
+  start: {
+    usage: 'open an app, link, job, game or album',
+    dos: true,
+    run: ([name = ''], ctx) => start(name, ctx, 'start'),
+  },
   cls: { usage: 'clear screen', dos: true, run: () => ({ out: [], action: { type: 'clear' } }) },
   color: { usage: 'color [scheme|code]', dos: true, run: ([key]) => setColor(key) },
-  ver: { usage: 'show version', dos: true, run: () => ({ out: ['', `hpiaia97 [Version 4.10]`, ''] }) },
+  ver: { usage: 'show version', dos: true, run: () => ({ out: ['', version, ''] }) },
   time: {
     usage: 'current time',
     dos: true,
@@ -193,7 +237,7 @@ const commands: Record<string, Command> = {
   },
   cd: { usage: 'change directory', run: ([path = '~'], ctx) => changeDir(path, ctx, false) },
   pwd: { usage: 'print directory', run: (_, ctx) => ({ out: [unixPath(ctx.cwd)] }) },
-  open: { usage: 'open an app or link', run: ([name = ''], ctx) => start(name, ctx, 'open') },
+  open: { usage: 'open an app, link, job, game or album', run: ([name = ''], ctx) => start(name, ctx, 'open') },
   links: {
     usage: 'show all links',
     run: (_, ctx) => ({ out: links.map((l) => `${bold(l.alias.padEnd(14))}${link(absolute(l.href, ctx))}`) }),
@@ -234,16 +278,23 @@ const commands: Record<string, Command> = {
   credits: {
     usage: 'who made what',
     run: () => {
-      const col = (label: string) => dim(label.padEnd(12))
+      const col = (label: string) => dim(label.padEnd(20))
+      const anchor = (text: string, href?: string) => (href ? link(href, text) : text)
+      const by = (c: (typeof site.credits)[number]) =>
+        [
+          [c.title && anchor(c.title, c.url), c.by && `${dim('by')} ${anchor(c.by, c.byUrl)}`]
+            .filter(Boolean)
+            .join(' '),
+          c.license && anchor(c.license, c.licenseUrl),
+          c.note && dim(c.note),
+        ]
+          .filter(Boolean)
+          .join(dim(' · '))
       return {
         out: [
-          ...site.credits.map(
-            (c) =>
-              `${col(c.what)}${link(c.url, c.title)}${dim(' by ')}${link(c.byUrl, c.by)}${dim(' · ')}${link(c.licenseUrl, c.license)}`,
-          ),
-          `${col('posters')}${dim(site.posters)}`,
           `${col('built with')}${site.stack.join(' · ')}`,
-          `${col('made by')}${site.name.toLowerCase()}${dim(' · ')}${link('https://github.com/hpiaia/hpiaia-dev', 'source')}`,
+          ...site.credits.map((c) => `${col(c.what)}${by(c)}`),
+          `${col('made by')}${site.name}${dim(' · ')}${link(site.source, 'source on github')}`,
         ],
       }
     },
@@ -252,7 +303,10 @@ const commands: Record<string, Command> = {
     usage: 'sound on|off',
     run: ([state]) => {
       if (state !== 'on' && state !== 'off') return { out: [dim('usage: sound on|off')] }
-      return { out: [dim(`keyboard sound ${state}`)], action: { type: 'sound', on: state === 'on' } }
+      return {
+        out: [dim(state === 'on' ? 'sounds on' : 'sounds off, winamp muted too')],
+        action: { type: 'sound', on: state === 'on' },
+      }
     },
   },
   clear: { usage: 'clear screen', run: () => ({ out: [], action: { type: 'clear' } }) },
@@ -270,7 +324,10 @@ const eggs: Record<string, string[]> = {
   edit: ['edit: try the WordPad window instead'],
   vim: ['vim: use :q! to exit. just kidding, this is a browser'],
   nano: ['nano: no.'],
-  music: [`${dim('sprnv4 on soundcloud → ')}${link('https://soundcloud.com/sprnv4')}`],
+  music: [
+    `${dim('my tracks: sprnv4 on soundcloud → ')}${link('https://soundcloud.com/sprnv4')}`,
+    dim('the albums on the posters: dir music, then start dirt'),
+  ],
   hello: ['hi.'],
 }
 
@@ -280,12 +337,18 @@ export function run(input: string, ctx: Context): Result {
   const [raw, ...args] = trimmed.replace(/^(cd|chdir)(?=[.\\])/i, '$1 ').split(/\s+/)
   if (!raw) return { out: [] }
   const name = raw.toLowerCase()
+  if (name === 'd:') return { out: ['', 'Not ready reading drive D', 'Abort, Retry, Fail?', ''] }
   if (/^[a-z]:$/.test(name)) return { out: [name === 'c:' ? '' : 'Invalid drive specification'] }
   const command = commands[name]
   if (command) return command.run(args, ctx)
   if (eggs[name]) return { out: eggs[name] }
   return { out: ['Bad command or file name'] }
 }
+
+const aliases = () =>
+  searched
+    .flatMap((dir) => list(dir ? `${home}\\${dir}` : home))
+    .flatMap((e) => (e.kind === 'file' && e.alias ? [e.alias] : []))
 
 const dosCommand = (name: string) => !!commands[name.toLowerCase()]?.dos
 
@@ -304,7 +367,10 @@ export function complete(input: string, cwd = home): string[] {
         : first === 'sound'
           ? match(['on', 'off'])
           : first === 'open' || first === 'start' || first === 'copy'
-            ? match([...(first === 'copy' ? [] : apps.map((a) => a.key)), ...links.map((l) => l.alias)])
+            ? match([
+                ...(first === 'copy' ? [] : [...apps.map((a) => a.key), ...aliases()]),
+                ...links.map((l) => l.alias),
+              ])
             : // Unix commands complete in lowercase, DOS ones keep the drive's uppercase
               completions(last, cwd).map((c) => (dosCommand(first) ? c : c.toLowerCase()))
   return candidates.map((c) => `${head} ${c}`)
@@ -315,7 +381,7 @@ export const prompt = (cwd = home) => `${display(cwd)}>`
 export function bootLines() {
   return [
     '',
-    `hpiaia97 [Version 4.10]`,
+    version,
     `(C) Copyright ${site.born}-${new Date().getFullYear()} ${site.name}.`,
     '',
     dim(`Type ${bold('HELP')}${dim(' for commands, DIR to look around. Unix commands work too.')}`),
@@ -323,4 +389,4 @@ export function bootLines() {
   ]
 }
 
-export const startup = ['type about.txt']
+export const startup = ['dir']

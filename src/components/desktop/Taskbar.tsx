@@ -1,13 +1,17 @@
 'use client'
 
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import * as Menu from '@radix-ui/react-dropdown-menu'
+import { useState } from 'react'
 
-import { companies } from '@/components/desktop/apps/shared'
 import { appIcons, FolderIcon, Logo, ui } from '@/components/desktop/icons'
+import { games } from '@/content/games'
 import { resume } from '@/content/resume'
 import { site } from '@/content/site'
 import { app, type AppKey } from '@/lib/apps'
+import { launchGame } from '@/lib/dialogs'
+import { useClock } from '@/lib/hooks'
 import { setSetting, useSetting } from '@/lib/settings'
+import { companies } from '@/lib/utils'
 import { focus, minimize, open, useWindows } from '@/lib/windows'
 
 type Entry = { label: string; icon: React.ReactNode; run?: () => void; href?: string; children?: Entry[] } | 'separator'
@@ -21,30 +25,11 @@ const large = (key: AppKey) => {
   return <Icon className="size-6" />
 }
 
-function useClock() {
-  return useSyncExternalStore(
-    (fn) => {
-      const timer = setInterval(fn, 10_000)
-      return () => clearInterval(timer)
-    },
-    () => new Date().toLocaleTimeString('en', { hour: 'numeric', minute: '2-digit' }),
-    () => '',
-  )
-}
+const itemClass =
+  'flex w-full cursor-default items-center gap-2 pr-3 pl-1.5 text-left outline-none data-[highlighted]:bg-select data-[highlighted]:text-select-ink data-[state=open]:bg-select data-[state=open]:text-select-ink'
 
-function Row({
-  entry,
-  size,
-  onDone,
-}: {
-  entry: Exclude<Entry, 'separator'>
-  size: 'large' | 'small'
-  onDone: () => void
-}) {
-  const [sub, setSub] = useState(false)
-  const cls = `flex w-full items-center gap-2 pr-3 pl-1.5 text-left hover:bg-select hover:text-select-ink focus-visible:bg-select focus-visible:text-select-ink focus-visible:outline-none ${
-    size === 'large' ? 'h-9' : 'h-6'
-  } ${sub ? 'bg-select text-select-ink' : ''}`
+function Row({ entry, size }: { entry: Exclude<Entry, 'separator'>; size: 'large' | 'small' }) {
+  const height = size === 'large' ? 'h-9' : 'h-6'
   const body = (
     <>
       <span className={`grid shrink-0 place-items-center ${size === 'large' ? 'size-7' : 'size-5'}`}>{entry.icon}</span>
@@ -52,37 +37,39 @@ function Row({
       {entry.children && <ui.arrow className="size-2" />}
     </>
   )
-  return (
-    <li className="relative" onPointerEnter={() => setSub(true)} onPointerLeave={() => setSub(false)}>
-      {entry.href ? (
-        <a href={entry.href} target="_blank" rel="noreferrer" className={cls} onClick={onDone}>
+  if (entry.children)
+    return (
+      <div className="start-sub relative">
+        <Menu.Sub>
+          <Menu.SubTrigger className={`${itemClass} ${height}`}>{body}</Menu.SubTrigger>
+          <Menu.SubContent className="min-w-48 bg-face p-[3px] outline-none bevel-window">
+            <Entries entries={entry.children} size="small" />
+          </Menu.SubContent>
+        </Menu.Sub>
+      </div>
+    )
+  if (entry.href)
+    return (
+      <Menu.Item asChild className={`${itemClass} ${height}`}>
+        <a href={entry.href} target="_blank" rel="noreferrer">
           {body}
         </a>
-      ) : (
-        <button
-          type="button"
-          className={cls}
-          onClick={() => {
-            if (entry.children) return setSub((s) => !s)
-            entry.run?.()
-            onDone()
-          }}
-        >
-          {body}
-        </button>
-      )}
-      {sub && entry.children && (
-        <ul className="absolute bottom-[-3px] left-full z-10 min-w-48 bg-face p-[3px] bevel-window">
-          {entry.children.map((child, i) =>
-            child === 'separator' ? (
-              <li key={i} className="mx-1 my-1 h-0.5 bevel-thin-in" />
-            ) : (
-              <Row key={child.label} entry={child} size="small" onDone={onDone} />
-            ),
-          )}
-        </ul>
-      )}
-    </li>
+      </Menu.Item>
+    )
+  return (
+    <Menu.Item className={`${itemClass} ${height}`} onSelect={entry.run}>
+      {body}
+    </Menu.Item>
+  )
+}
+
+function Entries({ entries, size }: { entries: Entry[]; size: 'large' | 'small' }) {
+  return entries.map((entry, i) =>
+    entry === 'separator' ? (
+      <Menu.Separator key={i} className="mx-1 my-1 h-0.5 bevel-thin-in" />
+    ) : (
+      <Row key={entry.label} entry={entry} size={size} />
+    ),
   )
 }
 
@@ -90,33 +77,34 @@ type Props = { compact: boolean; onFind: () => void; onShutdown: () => void }
 
 export function Taskbar({ compact, onFind, onShutdown }: Props) {
   const [start, setStart] = useState(false)
-  const bar = useRef<HTMLDivElement>(null)
   const { windows, focused } = useWindows()
   const view = useSetting('view')
   const sound = useSetting('sound')
+  const night = useSetting('appearance') === 'dark'
   const clock = useClock()
   const toDesk = view === 'screen'
-
-  useEffect(() => {
-    if (!start) return
-    const outside = (e: PointerEvent) => {
-      if (!bar.current?.contains(e.target as Node)) setStart(false)
-    }
-    const escape = (e: KeyboardEvent) => e.key === 'Escape' && setStart(false)
-    document.addEventListener('pointerdown', outside)
-    document.addEventListener('keydown', escape)
-    return () => {
-      document.removeEventListener('pointerdown', outside)
-      document.removeEventListener('keydown', escape)
-    }
-  }, [start])
 
   const program = (key: AppKey, label = app(key).label): Entry => ({ label, icon: small(key), run: () => open(key) })
   const entries: Entry[] = [
     {
       label: 'Programs',
       icon: <FolderIcon className="size-6" />,
-      children: (['about', 'work', 'cv', 'terminal', 'skills', 'contact', 'music'] as AppKey[]).map((k) => program(k)),
+      children: [
+        ...(['about', 'work', 'cv', 'terminal', 'skills', 'contact', 'music', 'winamp'] as AppKey[]).map((k) =>
+          program(k),
+        ),
+        'separator',
+        {
+          label: 'Games',
+          icon: <FolderIcon className="size-4" />,
+          children: games.map((g) => ({
+            label: g.title,
+            // eslint-disable-next-line @next/next/no-img-element
+            icon: <img src={g.icon ?? g.cover} alt="" className={g.icon ? 'size-[16px]' : 'h-4 w-3 object-cover'} />,
+            run: () => launchGame(g),
+          })),
+        },
+      ],
     },
     {
       label: 'Work',
@@ -155,39 +143,29 @@ export function Taskbar({ compact, onFind, onShutdown }: Props) {
   ]
 
   return (
-    <div
-      ref={bar}
-      className="relative z-20 flex h-[34px] shrink-0 items-center gap-1 bg-face px-[2px] shadow-[inset_0_1px_var(--w-light),inset_0_2px_var(--w-hilite)]"
-    >
-      {start && (
-        <div className="absolute bottom-[calc(100%-2px)] left-[2px] flex bg-face p-[3px] bevel-window">
+    <div className="start-anchor relative z-20 flex h-[34px] shrink-0 items-center gap-1 bg-face px-[2px] shadow-[inset_0_1px_var(--w-light),inset_0_2px_var(--w-hilite)]">
+      {/* No portal, so the menu stays inside the desktop and shows on the 3D monitor */}
+      <Menu.Root open={start} onOpenChange={setStart} modal={false}>
+        <Menu.Trigger
+          className={`focus-dotted flex h-[26px] shrink-0 items-center gap-1 px-1.5 font-bold outline-none ${start ? 'bevel-in [&>*]:translate-x-px [&>*]:translate-y-px' : 'bevel'}`}
+        >
+          <span className="flex items-center gap-1">
+            <Logo className="size-5" />
+            Start
+          </span>
+        </Menu.Trigger>
+        <Menu.Content loop className="flex bg-face p-[3px] outline-none bevel-window">
           <div className="flex w-7 items-end justify-center bg-gradient-to-t from-[#000080] to-[#1084d0] pb-2">
-            <span className="text-lg leading-none whitespace-nowrap text-white [writing-mode:vertical-rl] rotate-180">
+            <span className="rotate-180 text-lg leading-none whitespace-nowrap text-white [writing-mode:vertical-rl]">
               <b>hpiaia</b>
               <span className="font-normal">97</span>
             </span>
           </div>
-          <ul className="min-w-52 py-0.5">
-            {entries.map((entry, i) =>
-              entry === 'separator' ? (
-                <li key={i} className="mx-1 my-1 h-0.5 bevel-thin-in" />
-              ) : (
-                <Row key={entry.label} entry={entry} size="large" onDone={() => setStart(false)} />
-              ),
-            )}
-          </ul>
-        </div>
-      )}
-
-      <button
-        type="button"
-        aria-expanded={start}
-        onClick={() => setStart((s) => !s)}
-        className={`focus-dotted flex h-[26px] shrink-0 items-center gap-1 px-1.5 font-bold ${start ? 'pt-px pl-[7px] bevel-in' : 'bevel'}`}
-      >
-        <Logo className="size-5" />
-        Start
-      </button>
+          <div className="min-w-52 py-0.5">
+            <Entries entries={entries} size="large" />
+          </div>
+        </Menu.Content>
+      </Menu.Root>
       <span className="mx-0.5 h-[26px] w-0.5 bevel-thin" />
 
       <div className="flex min-w-0 flex-1 gap-1">
@@ -201,7 +179,7 @@ export function Taskbar({ compact, onFind, onShutdown }: Props) {
               onClick={() => (active ? minimize(w.key) : focus(w.key))}
               className={`focus-dotted flex h-[26px] min-w-0 items-center gap-1.5 px-1.5 text-left ${
                 compact ? 'w-9 justify-center' : 'max-w-44 flex-1'
-              } ${active ? 'dither pt-px font-bold bevel-in' : 'bg-face bevel'}`}
+              } ${active ? 'dither font-bold bevel-in [&>*]:translate-y-px' : 'bg-face bevel'}`}
             >
               {small(w.key)}
               {!compact && <span className="truncate">{app(w.key).title}</span>}
@@ -217,15 +195,23 @@ export function Taskbar({ compact, onFind, onShutdown }: Props) {
           onClick={() => setSetting('view', toDesk ? 'desk' : 'screen')}
           className="flex items-center gap-1"
         >
-          <ui.cube className="size-4" />
+          <ui.cube className="size-[16px]" />
           {!compact && <span>{toDesk ? '3D' : 'Exit 3D'}</span>}
+        </button>
+        <button
+          type="button"
+          title={night ? 'Standard scheme' : 'Night scheme'}
+          aria-pressed={night}
+          onClick={() => setSetting('appearance', night ? 'light' : 'dark')}
+        >
+          {night ? <ui.moon className="size-[16px]" /> : <ui.sun className="size-[16px]" />}
         </button>
         <button
           type="button"
           title={sound === 'on' ? 'Mute sounds' : 'Unmute sounds'}
           onClick={() => setSetting('sound', sound === 'on' ? 'off' : 'on')}
         >
-          <ui.speaker className="size-4" muted={sound === 'off'} />
+          <ui.speaker className="size-[16px]" muted={sound === 'off'} />
         </button>
         <time className="min-w-14 text-center tabular-nums">{clock}</time>
       </div>

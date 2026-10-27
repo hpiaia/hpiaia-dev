@@ -4,10 +4,9 @@ import { useState } from 'react'
 
 import { Button, GroupBox, Sunken, Tabs } from '@/components/desktop/apps/shared'
 import { setSetting, useSetting, type Wallpaper } from '@/lib/settings'
-import { setTheme, themes, useTheme } from '@/lib/theme'
+import { wallpaperNames } from '@/lib/settings-script'
+import { themes } from '@/lib/theme'
 import { close } from '@/lib/windows'
-
-const wallpaperNames: Record<Wallpaper, string> = { teal: '(None)', clouds: 'Clouds', bliss: 'Rolling Hills' }
 
 function Radio({ checked, onChange, children }: React.PropsWithChildren<{ checked: boolean; onChange: () => void }>) {
   return (
@@ -22,7 +21,6 @@ function Background() {
   const wallpaper = useSetting('wallpaper')
   return (
     <>
-      {/* A tiny monitor previewing the live wallpaper */}
       <div className="mx-auto mb-3 w-44 bg-face p-2 pb-3 bevel">
         <div className="relative h-24 overflow-hidden bevel-in">
           <div className="wallpaper absolute inset-[2px]" />
@@ -73,7 +71,7 @@ function Appearance() {
 function Settings() {
   const view = useSetting('view')
   const sound = useSetting('sound')
-  const colors = useTheme()
+  const colors = useSetting('colors')
   return (
     <>
       <GroupBox label="Where this computer lives">
@@ -87,7 +85,7 @@ function Settings() {
       <GroupBox label="Command prompt colors" className="mt-3">
         <div className="flex flex-wrap gap-x-4">
           {themes.map((t) => (
-            <Radio key={t.key} checked={colors === t.key} onChange={() => setTheme(t.key)}>
+            <Radio key={t.key} checked={colors === t.key} onChange={() => setSetting('colors', t.key)}>
               <span
                 className="inline-grid h-4 w-6 place-items-center border border-ink font-mono text-[10px] leading-none"
                 style={{ background: t.bg, color: t.fg }}
@@ -120,19 +118,13 @@ export function Display() {
     <div className="flex min-h-0 flex-1 flex-col gap-2 p-1.5">
       <Tabs<Tab>
         tabs={[
-          { key: 'background', label: 'Background' },
-          { key: 'appearance', label: 'Appearance' },
-          { key: 'settings', label: 'Settings' },
+          { key: 'background', label: 'Background', content: <Background /> },
+          { key: 'appearance', label: 'Appearance', content: <Appearance /> },
+          { key: 'settings', label: 'Settings', content: <Settings /> },
         ]}
         active={tab}
         onChange={setTab}
-      >
-        <div className="scroll-98 h-full overflow-auto">
-          {tab === 'background' && <Background />}
-          {tab === 'appearance' && <Appearance />}
-          {tab === 'settings' && <Settings />}
-        </div>
-      </Tabs>
+      />
       <div className="flex justify-end">
         <Button primary onClick={() => close('display')}>
           OK

@@ -115,6 +115,24 @@ function Disc({ className }: Props) {
   )
 }
 
+function Amp({ className }: Props) {
+  return (
+    <Icon className={className}>
+      <rect x="2.5" y="5.5" width="27" height="21" fill="#2b2b3a" stroke="#000" />
+      <rect x="4" y="7" width="24" height="3" fill="#4a4a6a" />
+      <path d="M17 11 10 19h5l-3 7 9-10h-5l3-5z" fill="#ff9c00" stroke="#000" strokeLinejoin="round" />
+      {[
+        [22, 20, 4],
+        [24, 17, 7],
+        [26, 19, 5],
+      ].map(([x, y, h]) => (
+        <rect key={x} x={x} y={y} width="1" height={h} fill="#00e000" />
+      ))}
+      <rect x="5" y="23" width="9" height="1" fill="#00e000" />
+    </Icon>
+  )
+}
+
 function HelpBook({ className }: Props) {
   return (
     <Icon className={className}>
@@ -194,12 +212,12 @@ export const appIcons: Record<AppKey, (props: Props) => React.JSX.Element> = {
   skills: Chart,
   contact: Mail,
   music: Disc,
+  winamp: Amp,
   credits: HelpBook,
   display: Monitor,
   trash: Bin,
 }
 
-// Title bar and tray glyphs
 function Glyph({ className, children, box = '0 0 16 14' }: React.PropsWithChildren<Props & { box?: string }>) {
   return (
     <svg viewBox={box} className={className} shapeRendering="crispEdges" aria-hidden fill="currentColor">
@@ -208,26 +226,34 @@ function Glyph({ className, children, box = '0 0 16 14' }: React.PropsWithChildr
   )
 }
 
+function Caption({ children }: React.PropsWithChildren) {
+  return (
+    <svg width="16" height="14" viewBox="0 0 16 14" shapeRendering="crispEdges" aria-hidden fill="currentColor">
+      {children}
+    </svg>
+  )
+}
+
 export const ui = {
-  minimize: (p: Props) => (
-    <Glyph className={p.className}>
-      <rect x="4" y="9" width="6" height="2" />
-    </Glyph>
+  minimize: () => (
+    <Caption>
+      <path d="M4 9h6v2H4z" />
+    </Caption>
   ),
-  maximize: (p: Props) => (
-    <Glyph className={p.className}>
-      <path d="M3 2h9v2H3zM3 4h1v6H3zm8 0h1v6h-1zM3 10h9v1H3z" />
-    </Glyph>
+  maximize: () => (
+    <Caption>
+      <path fillRule="evenodd" d="M3 2h9v9H3zM4 4h7v6H4z" />
+    </Caption>
   ),
-  restore: (p: Props) => (
-    <Glyph className={p.className}>
-      <path d="M5 1h7v2H5zM5 3h1v1H5zm6 0h1v4h-1zm-1 4h1v1h-1zM2 4h7v2H2zM2 6h1v5H2zm6 0h1v5H8zM2 11h7v1H2z" />
-    </Glyph>
+  restore: () => (
+    <Caption>
+      <path d="M6 2h6v2H6zM11 4h1v4h-1zM6 4h1v1H6zM10 7h1v1h-1zM4 5h6v2H4zM9 7h1v4H9zM4 7h1v4H4zM5 10h4v1H5z" />
+    </Caption>
   ),
-  close: (p: Props) => (
-    <Glyph className={p.className}>
-      <path d="M3 3h2v1h1v1h1v1h1V5h1V4h1V3h2v1h-1v1h-1v1H9v1h1v1h1v1h1v1h-2V9H9V8H8V7H7v1H6v1H5v1H3V9h1V8h1V7h1V6H5V5H4V4H3z" />
-    </Glyph>
+  close: () => (
+    <Caption>
+      <path d="M4 3h2v1h1v1h2V4h1V3h2v1h-1v1h-1v1H9v1h1v1h1v1h1v1h-2V9H9V8H7v1H6v1H4V9h1V8h1V7h1V6H6V5H5V4H4z" />
+    </Caption>
   ),
   arrow: (p: Props) => (
     <Glyph className={p.className} box="0 0 8 8">
@@ -247,6 +273,25 @@ export const ui = {
       <path d="M8 7.5 14 4.5v7L8 14.5Z" fill="#808080" />
     </svg>
   ),
+  sun: (p: Props) => (
+    <svg viewBox="0 0 16 16" className={p.className} aria-hidden shapeRendering="crispEdges">
+      <path
+        d="M7 0h2v2H7zM7 14h2v2H7zM0 7h2v2H0zM14 7h2v2h-2zM2 2h2v2H2zM12 2h2v2h-2zM2 12h2v2H2zM12 12h2v2h-2z"
+        fill="#808000"
+      />
+      <path d="M6 4h4v1h1v1h1v4h-1v1h-1v1H6v-1H5v-1H4V6h1V5h1z" fill="#ffff00" stroke="#000" strokeWidth="0.5" />
+    </svg>
+  ),
+  moon: (p: Props) => (
+    <svg viewBox="0 0 16 16" className={p.className} aria-hidden>
+      <mask id="moon-cut">
+        <rect width="16" height="16" fill="#fff" />
+        <circle cx="10.5" cy="5.5" r="5" fill="#000" />
+      </mask>
+      <circle cx="8" cy="8.5" r="6.5" fill="#ffffc0" stroke="#000" strokeWidth="0.75" mask="url(#moon-cut)" />
+      <path d="M12.5 10h1v1h-1zM14 6.5h1v1h-1z" fill="#ffff00" />
+    </svg>
+  ),
   speaker: (p: Props & { muted?: boolean }) => (
     <svg viewBox="0 0 16 16" className={p.className} aria-hidden shapeRendering="crispEdges">
       <path d="M2 6h3l4-3v10l-4-3H2z" fill="#ffff00" stroke="#000" />
@@ -259,7 +304,6 @@ export const ui = {
   ),
 }
 
-// Start button mark: a tiny CRT, nodding to the monitor on the 3D desk
 export function Logo({ className }: Props) {
   return (
     <svg viewBox="0 0 16 16" className={className} shapeRendering="crispEdges" aria-hidden>

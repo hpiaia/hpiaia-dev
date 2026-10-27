@@ -2,6 +2,7 @@
 
 import { appIcons, ui } from '@/components/desktop/icons'
 import { localPoint } from '@/lib/pointer'
+import { ownHeading } from '@/lib/seo'
 import { close, focus, minimize, minSize, place, type Rect, toggleMaximize, type Win } from '@/lib/windows'
 
 type Edge = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw'
@@ -12,9 +13,10 @@ type Props = React.PropsWithChildren<{
   focused: boolean
   compact: boolean
   layer: React.RefObject<HTMLDivElement | null>
+  // Rendered before the desktop is measured: centered with CSS until the window manager takes over
+  pending?: boolean
 }>
 
-// Handles straddle the border so they are easy to grab without covering content
 const edges: [Edge, string][] = [
   ['n', '-top-1 inset-x-3 h-2 cursor-ns-resize'],
   ['s', '-bottom-1 inset-x-3 h-2 cursor-ns-resize'],
@@ -41,6 +43,15 @@ function resized(start: Rect, edge: Edge, dx: number, dy: number): Rect {
   return { x, y, w, h }
 }
 
+function centered({ w, h }: Rect): React.CSSProperties {
+  return {
+    left: `max(16px, calc(50% - ${w / 2}px))`,
+    top: `max(16px, calc(50% - ${h / 2}px))`,
+    width: `min(${w}px, calc(100% - 32px))`,
+    height: `min(${h}px, calc(100% - 32px))`,
+  }
+}
+
 function Control({ label, onClick, children }: React.PropsWithChildren<{ label: string; onClick: () => void }>) {
   return (
     <button
@@ -53,25 +64,24 @@ function Control({ label, onClick, children }: React.PropsWithChildren<{ label: 
         e.preventDefault()
       }}
       onClick={onClick}
-      className="grid h-4 w-[18px] place-items-center bg-face text-ink bevel active:pt-px active:pl-px active:bevel-in"
+      className="group block h-[14px] w-[16px] shrink-0 bg-face text-ink bevel active:bevel-in"
     >
-      {children}
+      <span className="block group-active:translate-x-px group-active:translate-y-px">{children}</span>
     </button>
   )
 }
 
-export function Window({ win, title, focused, compact, layer, children }: Props) {
+export function Window({ win, title, focused, compact, layer, pending, children }: Props) {
   const full = compact || win.maximized
   const { key } = win
 
   function drag(e: React.PointerEvent<HTMLElement>, edge?: Edge) {
     const root = layer.current
-    if (e.buttons !== 1 || !root || compact) return
+    if (e.buttons !== 1 || !root || compact || pending) return
     e.preventDefault()
     e.stopPropagation()
     focus(key)
     const [sx, sy] = localPoint(root, e.clientX, e.clientY)
-    // Dragging a maximized window restores it under the pointer
     const start = win.maximized ? { x: sx - win.w / 2, y: 0, w: win.w, h: win.h } : { ...win }
     const target = e.currentTarget
     target.setPointerCapture(e.pointerId)
@@ -95,6 +105,7 @@ export function Window({ win, title, focused, compact, layer, children }: Props)
   }
 
   const Icon = appIcons[key]
+  const Title = ownHeading.includes(key) ? 'p' : 'h1'
 
   return (
     <section
@@ -102,7 +113,10 @@ export function Window({ win, title, focused, compact, layer, children }: Props)
       aria-label={title}
       data-focused={focused || undefined}
       onPointerDownCapture={() => focus(key)}
-      style={{ zIndex: win.z, ...(full ? { inset: 0 } : { left: win.x, top: win.y, width: win.w, height: win.h }) }}
+      style={{
+        zIndex: win.z,
+        ...(full ? { inset: 0 } : pending ? centered(win) : { left: win.x, top: win.y, width: win.w, height: win.h }),
+      }}
       className={`absolute flex-col bg-face p-[3px] bevel-window ${win.minimized ? 'hidden' : 'flex'}`}
     >
       <header
@@ -116,23 +130,23 @@ export function Window({ win, title, focused, compact, layer, children }: Props)
         onDoubleClick={(e) => {
           if (!compact && !(e.target as HTMLElement).closest('button')) toggleMaximize(key)
         }}
-        className={`flex h-[22px] shrink-0 items-center gap-1 pr-[2px] pl-[3px] select-none ${focused ? 'title-on' : 'title-off'}`}
+        className={`flex h-[22px] shrink-0 items-center gap-[3px] pr-[3px] pl-[3px] select-none ${focused ? 'title-on' : 'title-off'}`}
       >
-        <Icon className="size-4 shrink-0" />
-        <p className="line-clamp-1 flex-1 font-bold tracking-wide">{title}</p>
+        <Icon className="size-[16px] shrink-0" />
+        <Title className="line-clamp-1 flex-1 font-bold tracking-wide">{title}</Title>
         {!compact && (
-          <>
+          <span className="flex">
             <Control label="Minimize" onClick={() => minimize(key)}>
-              <ui.minimize className="h-3.5 w-4" />
+              <ui.minimize />
             </Control>
             <Control label={win.maximized ? 'Restore' : 'Maximize'} onClick={() => toggleMaximize(key)}>
-              {win.maximized ? <ui.restore className="h-3.5 w-4" /> : <ui.maximize className="h-3.5 w-4" />}
+              {win.maximized ? <ui.restore /> : <ui.maximize />}
             </Control>
-          </>
+          </span>
         )}
-        <span className="ml-[2px]">
+        <span className="ml-[-1px] flex">
           <Control label="Close" onClick={() => close(key)}>
-            <ui.close className="h-3.5 w-4" />
+            <ui.close />
           </Control>
         </span>
       </header>

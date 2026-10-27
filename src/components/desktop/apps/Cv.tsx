@@ -1,6 +1,6 @@
 import { Button, StatusBar, Sunken } from '@/components/desktop/apps/shared'
 import { appIcons } from '@/components/desktop/icons'
-import { useMobile } from '@/lib/media'
+import { useMobile } from '@/lib/hooks'
 
 const pdf = '/resume.pdf'
 

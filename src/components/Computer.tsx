@@ -1,7 +1,7 @@
 'use client'
 
-import { Crt } from '@/components/Crt'
-import { CrtScene } from '@/components/CrtScene'
+import { Crt } from '@/components/3d/Crt'
+import { CrtScene } from '@/components/3d/CrtScene'
 import { Desktop } from '@/components/desktop/Desktop'
 import { ui } from '@/components/desktop/icons'
 import type { AppKey } from '@/lib/apps'
@@ -37,10 +37,12 @@ export function Computer({ initial }: Props) {
       <button
         type="button"
         onClick={() => setSetting('view', 'screen')}
-        className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-face px-3 py-1.5 text-ink bevel active:bevel-in"
+        className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-face px-3 py-1.5 text-ink bevel active:bevel-in active:[&>*]:translate-x-px active:[&>*]:translate-y-px"
       >
-        <ui.cube className="size-4" />
-        Back to the screen
+        <span className="flex items-center gap-1.5">
+          <ui.cube className="size-4" />
+          Back to the screen
+        </span>
       </button>
     </main>
   )

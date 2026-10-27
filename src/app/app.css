@@ -11,7 +11,6 @@
   --color-faint: #1c3a22;
 }
 
-/* Scheme colors, switched by data-appearance on <html> */
 @theme inline {
   --color-face: var(--w-face);
   --color-light: var(--w-light);
@@ -67,7 +66,6 @@
   color-scheme: dark;
 }
 
-/* Two-tone bevels, the whole look hangs on these */
 @utility bevel {
   box-shadow:
     inset -1px -1px var(--w-dark),
@@ -111,23 +109,15 @@
     1px 1px var(--w-hilite);
 }
 
-@utility tab-on {
-  border-radius: 3px 3px 0 0;
+/* Tabs bevel on top and sides only: the panel's own top edge runs under the inactive ones,
+   and the selected tab covers it so the two read as one surface */
+@utility tab {
+  border-radius: 4px 4px 0 0;
   box-shadow:
     inset -1px 0 var(--w-dark),
     inset 1px 1px var(--w-hilite),
     inset -2px 0 var(--w-shadow),
     inset 2px 2px var(--w-light);
-}
-
-@utility tab-off {
-  border-radius: 3px 3px 0 0;
-  box-shadow:
-    inset -1px 0 var(--w-dark),
-    inset 1px 1px var(--w-hilite),
-    inset -2px 0 var(--w-shadow),
-    inset 2px 2px var(--w-light),
-    inset 0 -1px var(--w-hilite);
 }
 
 @utility title-on {
@@ -156,7 +146,6 @@ body {
   background-color: var(--w-select);
 }
 
-/* Square scrollbars with beveled thumbs */
 .scroll-98 {
   scrollbar-color: var(--w-face) var(--w-light);
 }
@@ -180,7 +169,29 @@ body {
   background: var(--w-face);
 }
 
-/* Pressed taskbar buttons get the dithered fill */
+/* The Start menu always opens above Start, with submenus to the right of their row. Radix positions menus
+   from screen coordinates, which land in the wrong place once the desktop is under the 3D monitor's
+   perspective, so the wrappers are pinned with plain CSS instead */
+.start-anchor > [data-radix-popper-content-wrapper] {
+  position: absolute !important;
+  inset: auto auto calc(100% - 2px) 2px !important;
+  transform: none !important;
+  min-width: 0 !important;
+}
+
+.start-sub > [data-radix-popper-content-wrapper] {
+  position: absolute !important;
+  inset: auto auto -3px 100% !important;
+  transform: none !important;
+  min-width: 0 !important;
+}
+
+/* Winamp sits on the desktop without a frame: only its own windows and menus take clicks */
+.winamp-stage .window,
+#webamp-context-menu {
+  pointer-events: auto;
+}
+
 .dither {
   background: repeating-conic-gradient(var(--w-face) 0 25%, var(--w-hilite) 0 50%) 0 0 / 2px 2px;
 }
@@ -194,37 +205,50 @@ body {
   pointer-events: none;
 }
 
-/* Desktop wallpapers */
 .wallpaper {
   background: var(--w-desktop);
 }
 
 [data-wallpaper='clouds'] .wallpaper {
-  background:
-    radial-gradient(ellipse 22% 9% at 18% 22%, rgb(255 255 255 / 0.95), transparent 70%),
-    radial-gradient(ellipse 16% 7% at 26% 19%, rgb(255 255 255 / 0.9), transparent 70%),
-    radial-gradient(ellipse 26% 10% at 72% 38%, rgb(255 255 255 / 0.9), transparent 70%),
-    radial-gradient(ellipse 14% 6% at 80% 34%, rgb(255 255 255 / 0.85), transparent 70%),
-    radial-gradient(ellipse 30% 11% at 40% 72%, rgb(255 255 255 / 0.85), transparent 70%),
-    radial-gradient(ellipse 18% 7% at 52% 68%, rgb(255 255 255 / 0.8), transparent 70%),
-    linear-gradient(to bottom, #2f62c8, #6fa0e8 60%, #9fc3f2);
+  background: #000 url('/wallpapers/clouds.png') center / cover no-repeat;
 }
 
-[data-wallpaper='bliss'] .wallpaper {
-  background:
-    radial-gradient(ellipse 30% 8% at 70% 18%, rgb(255 255 255 / 0.7), transparent 70%),
-    radial-gradient(ellipse 90% 45% at 35% 105%, #3f9b2c 0 60%, transparent 61%),
-    radial-gradient(ellipse 80% 40% at 85% 110%, #4fae35 0 60%, transparent 61%),
-    radial-gradient(ellipse 120% 40% at 50% 100%, #2f7f22 0 55%, transparent 56%),
-    linear-gradient(to bottom, #2a64d6, #5c97ea 45%, #a9cdf5 70%);
+[data-wallpaper='windows-98'] .wallpaper {
+  background: #000 url('/wallpapers/windows-98.jpg') center / cover no-repeat;
 }
 
-[data-appearance='dark'][data-wallpaper='clouds'] .wallpaper,
-[data-appearance='dark'][data-wallpaper='bliss'] .wallpaper {
-  filter: brightness(0.55) saturate(0.9);
+[data-wallpaper='space'] .wallpaper {
+  background: #000 url('/wallpapers/space.jpg') center / cover no-repeat;
 }
 
-/* CRT layers over the desktop on the 3D monitor */
+[data-wallpaper='underwater'] .wallpaper {
+  background: #000 url('/wallpapers/underwater.jpg') center / cover no-repeat;
+}
+
+[data-wallpaper='carved-stone'] .wallpaper {
+  background: url('/wallpapers/carved-stone.png') repeat;
+  image-rendering: pixelated;
+}
+
+[data-wallpaper='bubbles'] .wallpaper {
+  background: url('/wallpapers/bubbles.png') repeat;
+  image-rendering: pixelated;
+}
+
+[data-wallpaper='forest'] .wallpaper {
+  background: url('/wallpapers/forest.png') repeat;
+  image-rendering: pixelated;
+}
+
+[data-wallpaper='blue-rivets'] .wallpaper {
+  background: url('/wallpapers/blue-rivets.png') repeat;
+  image-rendering: pixelated;
+}
+
+[data-appearance='dark']:not([data-wallpaper='teal']) .wallpaper {
+  filter: brightness(0.6);
+}
+
 .crt {
   position: relative;
   overflow: hidden;
@@ -307,7 +331,6 @@ body {
   background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.7));
 }
 
-/* The desktop on the 3D monitor keeps its own colors, with a lighter tube on top */
 .crt.crt--desk {
   background: var(--w-desktop);
   color: var(--w-ink);

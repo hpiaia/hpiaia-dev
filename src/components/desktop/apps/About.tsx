@@ -3,7 +3,6 @@ import { resume } from '@/content/resume'
 import { site } from '@/content/site'
 import { open } from '@/lib/windows'
 
-// A WordPad-style document
 export function About() {
   return (
     <>
@@ -19,7 +18,7 @@ export function About() {
           <article className="mx-auto max-w-[640px] px-6 py-6 font-serif text-[15px] leading-relaxed @xl:px-10">
             <div className="mb-5 flex items-center gap-4 font-sans">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={site.avatar} alt="" className="size-24 shrink-0 border border-ink object-cover" />
+              <img src={site.avatar} alt={site.name} className="size-24 shrink-0 border border-ink object-cover" />
               <div>
                 <h1 className="text-2xl font-bold">{site.name}</h1>
                 <p className="text-muted">

@@ -6,10 +6,19 @@ import type { Metadata, Viewport } from 'next'
 
 import { site } from '@/content/site'
 import { fontClassNames } from '@/lib/fonts'
-import { settingsScript } from '@/lib/wallpapers'
+import { share, siteUrl } from '@/lib/seo'
+import { settingsScript } from '@/lib/settings-script'
 
-export const metadata: Metadata = { title: site.title, description: site.description }
-export const viewport: Viewport = { themeColor: '#eeefe9' }
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  title: { default: site.title, template: `%s · ${site.name}` },
+  description: site.description,
+  authors: [{ name: site.name, url: siteUrl }],
+  creator: site.name,
+  ...share,
+}
+
+export const viewport: Viewport = { themeColor: '#008080' }
 
 export default function RootLayout({ children }: Readonly<React.PropsWithChildren>) {
   return (

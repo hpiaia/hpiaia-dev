@@ -3,7 +3,6 @@ import { resume } from '@/content/resume'
 
 const header = 'sticky top-0 bg-face px-2 py-0.5 text-left font-normal bevel'
 
-// A details-view list, column headers and all
 export function Skills() {
   const rows = [
     ...resume.skills.map(([area, tools]) => ({ area, tools, kind: 'Technical' })),

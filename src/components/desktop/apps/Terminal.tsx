@@ -8,18 +8,21 @@ import { ImageAddon } from '@xterm/addon-image'
 import { Unicode11Addon } from '@xterm/addon-unicode11'
 import { Terminal as Xterm } from '@xterm/xterm'
 import { useEffect, useRef } from 'react'
+import { Readline } from 'xterm-readline'
 
+import { games } from '@/content/games'
 import type { AppKey } from '@/lib/apps'
 import { CLEAR, CRLF, image } from '@/lib/ansi'
+import { launchGame } from '@/lib/dialogs'
 import { defaultFont, fonts } from '@/lib/fonts'
 import { home } from '@/lib/fs'
-import { keyDown, keyUp, warm } from '@/lib/keys'
 import { remapPointer } from '@/lib/pointer'
-import { setSetting } from '@/lib/settings'
+import { getSetting, setSetting, useSetting, useSettings } from '@/lib/settings'
 import { bootLines, complete, prompt, run, startup } from '@/lib/shell'
-import { currentTheme, setTheme, subscribeTheme, theme, useTheme, xtermTheme } from '@/lib/theme'
+import { sleep, toBase64 } from '@/lib/utils'
+import { theme, xtermTheme } from '@/lib/theme'
 
-function fontFamily(key: string | null) {
+function fontFamily(key: string) {
   const font = fonts.find((f) => f.key === key) ?? fonts.find((f) => f.key === defaultFont) ?? fonts[0]
   const root = document.documentElement
   root.style.setProperty('--font-mono', `var(${font.variable})`)
@@ -27,22 +30,12 @@ function fontFamily(key: string | null) {
   return { family: family || 'monospace', weight: font.weight, bold: font.heroWeight }
 }
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-async function toBase64(url: string) {
-  const response = await fetch(url)
-  const buffer = await response.arrayBuffer()
-  let binary = ''
-  for (const byte of new Uint8Array(buffer)) binary += String.fromCharCode(byte)
-  return { base64: btoa(binary), bytes: buffer.byteLength }
-}
-
-type Props = { active?: boolean; onExit?: () => void; onApp?: (key: AppKey) => void }
+type Props = { active?: boolean; onExit?: () => void; onApp?: (key: AppKey, sub?: string) => void }
 
 export default function Terminal({ active = true, onExit, onApp }: Props) {
   const hostRef = useRef<HTMLDivElement>(null)
   const termRef = useRef<Xterm | null>(null)
-  const background = theme(useTheme()).bg
+  const background = theme(useSetting('colors')).bg
   const handlers = useRef({ onExit, onApp })
   useEffect(() => {
     handlers.current = { onExit, onApp }
@@ -51,7 +44,7 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
   useEffect(() => {
     const host = hostRef.current as HTMLDivElement
 
-    let fontKey = localStorage.getItem('font') ?? defaultFont
+    let fontKey = getSetting('font')
     const font = fontFamily(fontKey)
     const term = new Xterm({
       allowProposedApi: true,
@@ -65,7 +58,7 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
       fontWeightBold: font.bold,
       fontSize: 16,
       lineHeight: 1,
-      theme: xtermTheme(currentTheme()),
+      theme: xtermTheme(getSetting('colors')),
       linkHandler: { activate: (_, uri) => window.open(uri, '_blank', 'noreferrer'), allowNonHttpProtocols: true },
     })
     termRef.current = term
@@ -74,16 +67,14 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
     term.loadAddon(new Unicode11Addon())
     term.loadAddon(new ImageAddon({ sixelSupport: false, showPlaceholder: false }))
     term.loadAddon(new ClipboardAddon())
+    const readline = new Readline()
+    term.loadAddon(readline)
     term.unicode.activeVersion = '11'
 
     let disposed = false
-    let busy = true
-    let sound = localStorage.getItem('sound') !== 'off'
-    let buffer = ''
-    let cursor = 0
-    let history: string[] = []
-    let historyIndex = -1
     let cwd = home
+    // Tab cycles through matches in place, like cmd.exe; Shift+Tab goes back
+    let cycle: { options: string[]; index: number; shown: string } | null = null
 
     const ctx = () => ({ origin: window.location.origin, cwd })
 
@@ -96,21 +87,12 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
       if (dims && dims.cols > 0 && dims.rows > 1) term.resize(dims.cols, dims.rows - 1)
     }
 
-    function redraw() {
-      term.write(`\r\x1b[K${prompt(cwd)}${buffer}`)
-      const back = buffer.length - cursor
-      if (back > 0) term.write(`\x1b[${back}D`)
-    }
-
     function writeLines(lines: string[]) {
       for (const line of lines) term.write(line + CRLF)
     }
 
     async function execute(input: string) {
-      const command = input.trim()
-      if (command && history[history.length - 1] !== command) history = [...history, command]
-      historyIndex = -1
-      const result = run(command, ctx())
+      const result = run(input.trim(), ctx())
       if (result.action?.type === 'clear') term.write(CLEAR)
       else writeLines(result.out)
 
@@ -124,21 +106,22 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
         term.options.fontFamily = next.family
         term.options.fontWeight = next.weight
         term.options.fontWeightBold = next.bold
-        localStorage.setItem('font', action.key)
+        setSetting('font', action.key)
         fontKey = action.key
         resize()
       }
-      if (action.type === 'theme') setTheme(action.key)
-      if (action.type === 'app') handlers.current.onApp?.(action.key)
+      if (action.type === 'theme') setSetting('colors', action.key)
+      if (action.type === 'app') handlers.current.onApp?.(action.key, action.sub)
+      if (action.type === 'game') {
+        const game = games.find((g) => g.slug === action.slug)
+        if (game) launchGame(game)
+      }
       if (action.type === 'exit') {
         await sleep(300)
         handlers.current.onExit?.()
       }
       if (action.type === 'copy') term.write(`\x1b]52;c;${btoa(action.text)}\x07`)
-      if (action.type === 'sound') {
-        sound = action.on
-        setSetting('sound', sound ? 'on' : 'off')
-      }
+      if (action.type === 'sound') setSetting('sound', action.on ? 'on' : 'off')
       if (action.type === 'image') {
         try {
           const { base64, bytes } = await toBase64(action.url)
@@ -149,104 +132,26 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
       }
     }
 
-    function onData(data: string) {
-      if (busy) return
-      for (const key of data.match(/\x1b\[[A-Z~0-9;]*|[\s\S]/g) ?? []) handleKey(key)
-    }
-
-    async function submit() {
-      term.write(CRLF)
-      const input = buffer
-      buffer = ''
-      cursor = 0
-      busy = true
-      await execute(input)
-      if (disposed) return
-      term.write(prompt(cwd))
-      busy = false
-    }
-
-    function handleKey(key: string) {
-      switch (key) {
-        case '\r':
-          void submit()
-          return
-        case '\x7f':
-          if (cursor > 0) {
-            buffer = buffer.slice(0, cursor - 1) + buffer.slice(cursor)
-            cursor--
-            redraw()
-          }
-          return
-        case '\t': {
-          const options = complete(buffer, cwd)
-          if (options.length === 1) {
-            buffer = options[0] + (options[0].endsWith('/') ? '' : ' ')
-            cursor = buffer.length
-            redraw()
-          } else if (options.length > 1) {
-            term.write(CRLF + options.map((o) => o.trim().split(' ').pop()).join('  ') + CRLF)
-            redraw()
-          }
-          return
-        }
-        case '\x03':
-          term.write(`^C${CRLF}${prompt(cwd)}`)
-          buffer = ''
-          cursor = 0
-          return
-        case '\x0c':
-          term.write(CLEAR)
-          redraw()
-          return
-        case '\x15':
-          buffer = buffer.slice(cursor)
-          cursor = 0
-          redraw()
-          return
-        case '\x1b[A':
-          if (history.length) {
-            historyIndex = historyIndex === -1 ? history.length - 1 : Math.max(0, historyIndex - 1)
-            buffer = history[historyIndex]
-            cursor = buffer.length
-            redraw()
-          }
-          return
-        case '\x1b[B':
-          if (historyIndex !== -1) {
-            historyIndex = historyIndex + 1 >= history.length ? -1 : historyIndex + 1
-            buffer = historyIndex === -1 ? '' : history[historyIndex]
-            cursor = buffer.length
-            redraw()
-          }
-          return
-        case '\x1b[C':
-          if (cursor < buffer.length) {
-            cursor++
-            term.write('\x1b[C')
-          }
-          return
-        case '\x1b[D':
-          if (cursor > 0) {
-            cursor--
-            term.write('\x1b[D')
-          }
-          return
-        case '\x1b[H':
-        case '\x01':
-          cursor = 0
-          redraw()
-          return
-        case '\x1b[F':
-        case '\x05':
-          cursor = buffer.length
-          redraw()
-          return
+    function completeLine(back: boolean) {
+      const line = readline.getLine()
+      if (!cycle || cycle.shown !== line) {
+        const options = complete(line, cwd)
+        if (!options.length) return
+        if (options.length === 1 && !/[\\/]$/.test(options[0])) options[0] += ' '
+        cycle = { options, index: back ? 0 : -1, shown: '' }
       }
-      if (key.length === 1 && key >= ' ') {
-        buffer = buffer.slice(0, cursor) + key + buffer.slice(cursor)
-        cursor++
-        redraw()
+      const { options } = cycle
+      cycle.index = (cycle.index + (back ? -1 : 1) + options.length) % options.length
+      cycle.shown = options[cycle.index]
+      readline.updateLine(cycle.shown)
+    }
+
+    async function loop() {
+      while (!disposed) {
+        const input = await readline.read(prompt(cwd))
+        if (disposed) return
+        cycle = null
+        await execute(input)
       }
     }
 
@@ -257,7 +162,6 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
       term.open(host)
       resize()
       term.focus()
-      host.addEventListener('pointerdown', warm, { once: true })
 
       writeLines(bootLines())
       for (const command of startup) {
@@ -267,18 +171,18 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
         await execute(command)
         term.write(CRLF)
       }
-      term.write(prompt(cwd))
-      busy = false
+      void loop()
     }
 
     term.attachCustomKeyEventHandler((event) => {
-      if (sound && !event.metaKey && !event.ctrlKey && !event.repeat) {
-        if (event.type === 'keydown') keyDown(event.key)
-        else if (event.type === 'keyup') keyUp(event.key)
+      if (event.key === 'Tab') {
+        // Keep the browser from moving focus out of the prompt
+        event.preventDefault()
+        if (event.type === 'keydown') completeLine(event.shiftKey)
+        return false
       }
       return true
     })
-    const data = term.onData(onData)
     const selection = term.onSelectionChange(() => {
       if (term.hasSelection()) term.clearSelection()
     })
@@ -287,15 +191,14 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
     })
     observer.observe(host)
     const unmap = remapPointer(host)
-    const untheme = subscribeTheme(() => {
-      term.options.theme = xtermTheme(currentTheme())
+    const untheme = useSettings.subscribe((settings, previous) => {
+      if (settings.colors !== previous.colors) term.options.theme = xtermTheme(settings.colors)
     })
     void boot()
 
     return () => {
       disposed = true
       termRef.current = null
-      data.dispose()
       selection.dispose()
       observer.disconnect()
       unmap()

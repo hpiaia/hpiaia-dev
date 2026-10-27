@@ -1,26 +1,28 @@
-// Renders the **bold** and [text](url) markup used in resume content
+import * as RadixTabs from '@radix-ui/react-tabs'
+
+import { spans } from '@/lib/markdown'
+
 export function Rich({ text }: { text: string }) {
-  return text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/).map((part, i) => {
-    const md = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
-    if (md)
+  return spans(text).map((span, i) => {
+    if (span.href)
       return (
         <a
           key={i}
-          href={md[2]}
+          href={span.href}
           target="_blank"
           rel="noreferrer"
           className="text-[#0000ee] underline dark:text-[#8ab4ff]"
         >
-          {md[1]}
+          {span.text}
         </a>
       )
-    if (part.startsWith('**')) return <strong key={i}>{part.slice(2, -2)}</strong>
-    return part
+    if (span.bold) return <strong key={i}>{span.text}</strong>
+    return span.text
   })
 }
 
 const buttonClass =
-  'focus-dotted inline-flex min-w-[75px] items-center justify-center gap-1.5 bg-face px-3 py-1 text-ink bevel active:bevel-in active:pt-[5px] active:pr-[11px] active:pb-[3px] active:pl-[13px] disabled:text-muted'
+  'group focus-dotted inline-flex min-w-[75px] items-center justify-center bg-face px-3 py-1 text-ink bevel active:bevel-in disabled:text-muted'
 
 export function Button({
   children,
@@ -28,23 +30,33 @@ export function Button({
   download,
   onClick,
   primary,
-}: React.PropsWithChildren<{ href?: string; download?: string; onClick?: () => void; primary?: boolean }>) {
-  // The default button of a dialog carries an extra black ring
+  autoFocus,
+}: React.PropsWithChildren<{
+  href?: string
+  download?: string
+  onClick?: () => void
+  primary?: boolean
+  autoFocus?: boolean
+}>) {
   const cls = `${buttonClass} ${primary ? 'outline outline-1 outline-ink' : ''}`
+  const label = (
+    <span className="flex items-center gap-1.5 group-active:translate-x-px group-active:translate-y-px">
+      {children}
+    </span>
+  )
   if (href)
     return (
       <a href={href} download={download} target={download ? undefined : '_blank'} rel="noreferrer" className={cls}>
-        {children}
+        {label}
       </a>
     )
   return (
-    <button type="button" onClick={onClick} className={cls}>
-      {children}
+    <button type="button" onClick={onClick} autoFocus={autoFocus} className={cls}>
+      {label}
     </button>
   )
 }
 
-// White well with an inset bevel, used for documents, lists and fields
 export function Sunken({ className = '', children }: React.PropsWithChildren<{ className?: string }>) {
   return <div className={`bg-window p-[2px] text-ink bevel-in ${className}`}>{children}</div>
 }
@@ -60,7 +72,8 @@ export function GroupBox({
 }: React.PropsWithChildren<{ label: string; className?: string }>) {
   return (
     <fieldset className={`etched mt-2 px-3 pt-2 pb-3 ${className}`}>
-      <legend className="px-1">{label}</legend>
+      {/* The face color masks the etched line behind the label, like a real group box */}
+      <legend className="relative bg-face px-1">{label}</legend>
       {children}
     </fieldset>
   )
@@ -82,35 +95,35 @@ export function Tabs<T extends string>({
   tabs,
   active,
   onChange,
-  children,
-}: React.PropsWithChildren<{ tabs: { key: T; label: string }[]; active: T; onChange: (key: T) => void }>) {
+}: {
+  tabs: { key: T; label: string; content: React.ReactNode }[]
+  active: T
+  onChange: (key: T) => void
+}) {
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div role="tablist" className="relative z-10 flex pl-[2px]">
+    <RadixTabs.Root value={active} onValueChange={(v) => onChange(v as T)} className="flex min-h-0 flex-1 flex-col">
+      <RadixTabs.List className="relative z-10 flex items-end pl-[2px]">
         {tabs.map((t) => (
-          <button
+          <RadixTabs.Trigger
             key={t.key}
-            type="button"
-            role="tab"
-            aria-selected={t.key === active}
-            onClick={() => onChange(t.key)}
-            className={`focus-dotted relative bg-face px-3 ${
-              t.key === active ? '-mx-[2px] -mb-[2px] pt-1.5 pb-1.5 tab-on' : 'mt-[2px] py-1 tab-off'
-            }`}
+            value={t.key}
+            className="group relative h-[23px] bg-face px-[9px] text-ink/85 outline-none tab hover:text-ink data-[state=active]:z-10 data-[state=active]:-mx-[2px] data-[state=active]:-mb-[2px] data-[state=active]:h-[27px] data-[state=active]:px-[11px] data-[state=active]:pt-px data-[state=active]:text-ink"
           >
-            {t.label}
-          </button>
+            <span className="px-0.5 group-focus-visible:outline-1 group-focus-visible:outline-ink group-focus-visible:outline-dotted">
+              {t.label}
+            </span>
+          </RadixTabs.Trigger>
         ))}
-      </div>
-      <div className="min-h-0 flex-1 bg-face p-3 bevel-window">{children}</div>
-    </div>
+      </RadixTabs.List>
+      {tabs.map((t) => (
+        <RadixTabs.Content
+          key={t.key}
+          value={t.key}
+          className="scroll-98 min-h-0 flex-1 overflow-auto bg-face p-3 outline-none bevel-window"
+        >
+          {t.content}
+        </RadixTabs.Content>
+      ))}
+    </RadixTabs.Root>
   )
-}
-
-export const companies = (job: { companies: { name: string }[] }) => job.companies.map((c) => c.name).join(' & ')
-
-export function period(from: string, to: string) {
-  const fmt = (d: string) =>
-    d === 'now' ? 'Present' : new Date(`${d}-02`).toLocaleDateString('en', { month: 'short', year: 'numeric' })
-  return `${fmt(from)} – ${fmt(to)}`
 }

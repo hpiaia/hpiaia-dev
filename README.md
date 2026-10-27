@@ -9,8 +9,9 @@ monitor of a retro gaming desk in a 3D bedroom scene.
   maximize. The beveled look is a handful of Tailwind utilities (`bevel`, `bevel-in`, ...) in `src/app/app.css`. Apps are
   listed in `src/lib/apps.ts` and live in `src/components/desktop/apps/`. Window state is a small store in
   `src/lib/windows.ts`.
-- The focused window is mirrored in the URL (`/work/smartrr`, `/terminal`, ...), and every app path is prerendered,
-  so links open straight into a window. `/resume` still serves the pdf; the resume window lives at `/cv`.
+- Nothing is remembered between visits: the home page always starts with About, the command prompt and Winamp.
+  Every app also has its own prerendered path (`/work/smartrr`, `/terminal`, ...) that opens just that app, for
+  links and search engines. `/resume` still serves the pdf; the resume window lives at `/cv`.
 - ⌘K (or Start > Find) searches apps, jobs and links; F1 opens Help. The color scheme (Standard or Night), wallpaper,
   command prompt colors and sounds are in Display Properties and persist in localStorage.
 - The **3D desk** button swaps the page for a react-three-fiber scene: a retro desk model, a wall of posters, three.js
@@ -21,10 +22,15 @@ monitor of a retro gaming desk in a 3D bedroom scene.
   are plain functions in `src/lib/shell.ts` that return ANSI strings and an optional action. DOS commands (`dir`,
   `type`, `cd..`, `cls`, `start`, `color 0A`, `ver`, `tree`) sit on top of the unix ones (`ls`, `cat`, `cd`, `clear`,
   `open`, `pwd`), and both work on the same files. `help` lists them; `start <app>` opens desktop windows and `exit`
-  closes the prompt. Key presses play Holy Panda switch samples through Web Audio.
+  closes the prompt.
+- Key presses anywhere on the desktop play Holy Panda switch samples through Web Audio.
 - On the 3D monitor, the four left buttons switch the prompt colors between gray, green, blue and amber, and the
   power button turns the screen off to reveal reflective glass and the bedroom panorama.
-- Game packaging uses custom artwork with a faded-print finish tuned in `src/lib/print.ts`.
+- Game packaging uses custom artwork with a faded-print finish tuned in `src/lib/print.ts`. The same games sit on the
+  right of the desktop with their box art; opening one asks for a CD that is not in drive D:.
+- Winamp is [Webamp](https://github.com/captbaritone/webamp) drawn straight onto the desktop, playing the albums on
+  the bedroom wall (`src/content/albums.ts`) through a hidden YouTube player that stands in for Webamp's audio engine
+  (`src/components/desktop/apps/winamp/media.ts`).
 
 ## Develop
 
@@ -34,8 +40,8 @@ pnpm dev
 ```
 
 Content lives in `src/content/site.ts` and `src/content/resume.ts`. Desktop colors are the `--w-*` CSS variables at the top of
-`src/app/app.css`. Scene layout, camera and lights are the config at the top of `src/components/Scene.tsx`. Posters
-are the list at the top of `src/components/Wall.tsx`.
+`src/app/app.css`. Scene layout, camera and lights are the config at the top of `src/components/3d/Scene.tsx`. Posters
+are the list at the top of `src/components/3d/Wall.tsx`.
 
 The 3D model is `public/models/desk.glb`, compressed with meshopt and WebP textures via
 `gltf-transform optimize`.
@@ -53,6 +59,13 @@ The resume is data in `src/content/resume.ts`, rendered to PDF with `@react-pdf/
   reflection in the switched-off screen.
 - Command prompt font: IBM VGA 8x16 from the [Ultimate Oldschool PC Font Pack](https://int10h.org/oldschool-pc-fonts/)
   by VileR, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) (license in `public/fonts/IBM-VGA-LICENSE.txt`).
+- Game icons: the games' own executable icons, © their publishers, from [SteamGridDB](https://www.steamgriddb.com)
+  (World of Warcraft, Grand Chase, Last Chaos, Need for Speed Underground 2, Blood), the official WYD Global site,
+  MU Online's Steam store icon, and a fan-made round icon for Metin2 (DeviantArt).
+- Wallpapers: the Windows 98 originals, © Microsoft, via the
+  [Windows Wallpaper Wiki](https://windowswallpaper.miraheze.org/wiki/Windows_98).
+- Winamp: [Webamp](https://github.com/captbaritone/webamp) by Jordan Eldredge, MIT. Songs stream from their YouTube
+  uploads, © the artists and their labels.
 - Keyboard sounds: Holy Panda samples from [kbsim](https://github.com/tplai/kbsim) by Thomas Lai,
   MIT, via the [Mechvibes](https://github.com/hainguyents13/mechvibes) sound packs.
 - Posters: World of Warcraft art © Blizzard Entertainment, album covers © their labels. Personal,

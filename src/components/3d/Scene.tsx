@@ -5,12 +5,12 @@ import { Canvas, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useState } from 'react'
 import { type Group, type Mesh, MeshStandardMaterial, type PerspectiveCamera, Shape, type Texture } from 'three'
 
-import { Wall } from '@/components/Wall'
-import { useMobile, usePortrait } from '@/lib/media'
+import { Wall } from '@/components/3d/Wall'
+import { useMobile, usePortrait } from '@/lib/hooks'
 import { buttonClick, powerOff, powerOn } from '@/lib/power'
 import { printedMaterial } from '@/lib/print'
-import { useSetting } from '@/lib/settings'
-import { setTheme, themes, useTheme } from '@/lib/theme'
+import { setSetting, useSetting } from '@/lib/settings'
+import { themes } from '@/lib/theme'
 
 const scene = {
   file: '/models/desk.glb',
@@ -105,7 +105,7 @@ function Led({
 }
 
 function ThemeButtons({ powered }: { powered: boolean }) {
-  const active = useTheme()
+  const active = useSetting('colors')
   const [hovered, setHovered] = useState(false)
   useCursor(hovered)
   const shape = useMemo(() => roundedRect(scene.buttons.size[0], scene.buttons.size[1], scene.buttons.radius), [])
@@ -119,7 +119,7 @@ function ThemeButtons({ powered }: { powered: boolean }) {
               if (!powered) return
               e.stopPropagation()
               buttonClick()
-              setTheme(t.key)
+              setSetting('colors', t.key)
             }}
             onPointerOver={() => setHovered(powered)}
             onPointerOut={() => setHovered(false)}

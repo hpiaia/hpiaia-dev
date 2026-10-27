@@ -1,5 +1,5 @@
 export type AppKey =
-  'about' | 'work' | 'cv' | 'terminal' | 'skills' | 'contact' | 'music' | 'credits' | 'display' | 'trash'
+  'about' | 'work' | 'cv' | 'terminal' | 'skills' | 'contact' | 'music' | 'winamp' | 'credits' | 'display' | 'trash'
 
 export type App = {
   key: AppKey
@@ -17,6 +17,7 @@ export const apps: App[] = [
   { key: 'skills', title: 'Skills', label: 'Skills', size: [660, 440], side: 'left' },
   { key: 'contact', title: 'Say Hi', label: 'Say Hi', size: [460, 420], side: 'left' },
   { key: 'music', title: 'Media Player', label: 'Music', size: [540, 480], side: 'right' },
+  { key: 'winamp', title: 'Winamp', label: 'Winamp', size: [680, 476], side: 'right' },
   { key: 'credits', title: 'About hpiaia97', label: 'Help', size: [500, 520], side: 'right' },
   { key: 'display', title: 'Display Properties', label: 'Display', size: [420, 520], side: 'right' },
   { key: 'trash', title: 'Recycle Bin', label: 'Recycle Bin', size: [540, 380], side: 'right' },

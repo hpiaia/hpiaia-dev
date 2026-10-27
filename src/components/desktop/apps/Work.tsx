@@ -1,9 +1,10 @@
-import { Button, companies, period, Rich, Scroll, StatusBar, Sunken } from '@/components/desktop/apps/shared'
+import { Button, Rich, Scroll, StatusBar, Sunken } from '@/components/desktop/apps/shared'
 import { FolderIcon } from '@/components/desktop/icons'
 import { resume } from '@/content/resume'
+import { pathOf } from '@/lib/apps'
+import { companies, period } from '@/lib/utils'
 import { navigate } from '@/lib/windows'
 
-// Explorer: folders on the left, the open one on the right
 export function Work({ sub }: { sub?: string }) {
   const job = resume.jobs.find((j) => j.slug === sub) ?? resume.jobs[0]
   return (
@@ -18,16 +19,20 @@ export function Work({ sub }: { sub?: string }) {
             <ul className="ml-3.5 border-l border-dotted border-muted pl-1">
               {resume.jobs.map((j) => (
                 <li key={j.slug}>
-                  <button
-                    type="button"
-                    onClick={() => navigate('work', j.slug)}
+                  <a
+                    href={pathOf('work', j.slug)}
+                    onClick={(e) => {
+                      if (e.metaKey || e.ctrlKey || e.shiftKey) return
+                      e.preventDefault()
+                      navigate('work', j.slug)
+                    }}
                     className="flex w-full items-center gap-1.5 py-[3px] pl-1 text-left"
                   >
                     <FolderIcon className="size-4 shrink-0" />
                     <span className={`truncate px-0.5 ${j === job ? 'bg-select text-select-ink' : ''}`}>
                       {companies(j)}
                     </span>
-                  </button>
+                  </a>
                 </li>
               ))}
             </ul>
