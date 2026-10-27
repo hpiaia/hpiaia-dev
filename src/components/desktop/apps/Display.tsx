@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { Button, GroupBox, Sunken, Tabs } from '@/components/desktop/apps/shared'
 import { setSetting, useSetting, type Wallpaper } from '@/lib/settings'
 import { wallpaperNames } from '@/lib/settings-script'
-import { themes } from '@/lib/theme'
 import { close } from '@/lib/windows'
 
 function Radio({ checked, onChange, children }: React.PropsWithChildren<{ checked: boolean; onChange: () => void }>) {
@@ -71,7 +70,6 @@ function Appearance() {
 function Settings() {
   const view = useSetting('view')
   const sound = useSetting('sound')
-  const colors = useSetting('colors')
   return (
     <>
       <GroupBox label="Where this computer lives">
@@ -81,21 +79,6 @@ function Settings() {
         <Radio checked={view === 'desk'} onChange={() => setSetting('view', 'desk')}>
           On a desk, in 3D
         </Radio>
-      </GroupBox>
-      <GroupBox label="Command prompt colors" className="mt-3">
-        <div className="flex flex-wrap gap-x-4">
-          {themes.map((t) => (
-            <Radio key={t.key} checked={colors === t.key} onChange={() => setSetting('colors', t.key)}>
-              <span
-                className="inline-grid h-4 w-6 place-items-center border border-ink font-mono text-[10px] leading-none"
-                style={{ background: t.bg, color: t.fg }}
-              >
-                C:
-              </span>
-              {t.label}
-            </Radio>
-          ))}
-        </div>
       </GroupBox>
       <label className="mt-3 flex items-center gap-1.5">
         <input

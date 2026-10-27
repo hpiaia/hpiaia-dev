@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 import { defaultFont, fonts } from '@/lib/fonts'
-import { defaultTheme, themes } from '@/lib/theme'
+import { defaultMonitorFilter, monitorFilters } from '@/lib/monitor'
 import { settingsKey, wallpapers } from '@/lib/settings-script'
 
 export const appearances = ['light', 'dark'] as const
@@ -17,7 +17,7 @@ type Settings = {
   wallpaper: Wallpaper
   view: View
   sound: 'on' | 'off'
-  colors: string
+  monitor: string
   font: string
 }
 
@@ -26,7 +26,7 @@ const defaults: Settings = {
   wallpaper: 'teal',
   view: 'screen',
   sound: 'on',
-  colors: defaultTheme,
+  monitor: defaultMonitorFilter,
   font: defaultFont,
 }
 
@@ -35,7 +35,7 @@ const allowed: { [K in keyof Settings]: readonly Settings[K][] } = {
   wallpaper: wallpapers,
   view: views,
   sound: ['on', 'off'],
-  colors: themes.map((t) => t.key),
+  monitor: monitorFilters.map((f) => f.key),
   font: fonts.map((f) => f.key),
 }
 

@@ -115,22 +115,10 @@ function Disc({ className }: Props) {
   )
 }
 
+// The real Winamp logo rather than a pixel-art take on it
 function Amp({ className }: Props) {
-  return (
-    <Icon className={className}>
-      <rect x="2.5" y="5.5" width="27" height="21" fill="#2b2b3a" stroke="#000" />
-      <rect x="4" y="7" width="24" height="3" fill="#4a4a6a" />
-      <path d="M17 11 10 19h5l-3 7 9-10h-5l3-5z" fill="#ff9c00" stroke="#000" strokeLinejoin="round" />
-      {[
-        [22, 20, 4],
-        [24, 17, 7],
-        [26, 19, 5],
-      ].map(([x, y, h]) => (
-        <rect key={x} x={x} y={y} width="1" height={h} fill="#00e000" />
-      ))}
-      <rect x="5" y="23" width="9" height="1" fill="#00e000" />
-    </Icon>
-  )
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src="/icons/winamp.svg" alt="" className={className} aria-hidden />
 }
 
 function HelpBook({ className }: Props) {

@@ -1,4 +1,5 @@
 // "Gardenia" has no official studio upload, so it uses the same fan upload YouTube's own album playlist does.
+// Frogstomp's "Pure Massacre" only has the music video in the album playlist, so it uses the official single audio.
 export type Track = { title: string; youtube: string; seconds: number }
 export type Album = { slug: string; artist: string; title: string; year: number; cover: string; tracks: Track[] }
 
@@ -111,6 +112,26 @@ export const albums: Album[] = [
       { title: 'Another Love Song', youtube: 'HOlAUAlM4ys', seconds: 197 },
       { title: 'Song For The Deaf', youtube: 'lXGcr7gfU-I', seconds: 373 },
       { title: 'Mosquito Song', youtube: 'bMfPYxbOkrQ', seconds: 338 },
+    ],
+  },
+  {
+    slug: 'frogstomp',
+    artist: 'Silverchair',
+    title: 'Frogstomp',
+    year: 1995,
+    cover: '/posters/silverchair.jpg',
+    tracks: [
+      { title: "Israel's Son", youtube: 'aQuniZ0s2C0', seconds: 318 },
+      { title: 'Tomorrow', youtube: 'bqYuztPTgu8', seconds: 266 },
+      { title: 'Faultline', youtube: '-5PoxW3SzTA', seconds: 259 },
+      { title: 'Pure Massacre', youtube: '0PXZs_I6FyI', seconds: 276 },
+      { title: 'Shade', youtube: 'DWp226Im0P8', seconds: 242 },
+      { title: 'Leave Me Out', youtube: 'zN38BYmRrYg', seconds: 183 },
+      { title: 'Suicidal Dream', youtube: 'Vrzvhe1HUAU', seconds: 192 },
+      { title: 'Madman', youtube: 'sN909ARe3-0', seconds: 161 },
+      { title: 'Undecided', youtube: 'TMGL8rt8RGA', seconds: 275 },
+      { title: 'Cicada', youtube: 'LquEI3T-Cvw', seconds: 310 },
+      { title: 'Findaway', youtube: 'LtRCixo_IbM', seconds: 176 },
     ],
   },
 ]

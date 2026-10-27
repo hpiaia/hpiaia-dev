@@ -25,7 +25,7 @@ export function Cv() {
             </Button>
           </div>
         ) : (
-          <iframe src={`${pdf}#view=FitH&navpanes=0`} title="Resume" className="h-full w-full" />
+          <iframe src={`${pdf}#zoom=100&navpanes=0`} title="Resume" className="h-full w-full" />
         )}
       </Sunken>
       <StatusBar cells={['humberto-piaia.pdf', 'Read only']} />

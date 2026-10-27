@@ -73,8 +73,8 @@ export function Winamp({ win, compact }: { win: Win; compact: boolean }) {
         __customMediaClass: YouTubeMedia,
       })
       if (!small.current) {
-        const x = stage.current.clientWidth - 429
-        const y = Math.round(stage.current.clientHeight * 0.1425)
+        const x = stage.current.clientWidth - 504
+        const y = Math.round(stage.current.clientHeight * 0.1744)
         instance.store.dispatch({
           type: 'UPDATE_WINDOW_POSITIONS',
           positions: { main: { x, y }, playlist: { x, y: y + 116 } },

@@ -10,7 +10,7 @@ import { useMobile, usePortrait } from '@/lib/hooks'
 import { buttonClick, powerOff, powerOn } from '@/lib/power'
 import { printedMaterial } from '@/lib/print'
 import { setSetting, useSetting } from '@/lib/settings'
-import { themes } from '@/lib/theme'
+import { monitorFilter, monitorFilters } from '@/lib/monitor'
 
 const scene = {
   file: '/models/desk.glb',
@@ -104,22 +104,22 @@ function Led({
   )
 }
 
-function ThemeButtons({ powered }: { powered: boolean }) {
-  const active = useSetting('colors')
+function FilterButtons({ powered }: { powered: boolean }) {
+  const active = useSetting('monitor')
   const [hovered, setHovered] = useState(false)
   useCursor(hovered)
   const shape = useMemo(() => roundedRect(scene.buttons.size[0], scene.buttons.size[1], scene.buttons.radius), [])
   const [x, y, z] = scene.buttons.first
   return (
     <group>
-      {themes.map((t, i) => (
+      {monitorFilters.map((t, i) => (
         <group key={t.key} position={[x + i * scene.buttons.step, y, z]}>
           <mesh
             onClick={(e) => {
               if (!powered) return
               e.stopPropagation()
               buttonClick()
-              setSetting('colors', t.key)
+              setSetting('monitor', t.key)
             }}
             onPointerOver={() => setHovered(powered)}
             onPointerOut={() => setHovered(false)}
@@ -246,6 +246,7 @@ export default function Scene({ children }: React.PropsWithChildren) {
   const [power, setPower] = useState<'boot' | 'on' | 'off'>('boot')
   const on = power !== 'off'
   const glow = useSetting('appearance') === 'dark' ? '#9fb0ff' : '#fff1d6'
+  const filter = monitorFilter(useSetting('monitor')).filter
   const model = useGLTF(mobile ? scene.mobileFile : scene.file)
 
   useEffect(() => {
@@ -287,7 +288,7 @@ export default function Scene({ children }: React.PropsWithChildren) {
           >
             <div
               className={`rounded-lg power-${power}`}
-              style={{ width: scene.screen.width, height: scene.screen.height }}
+              style={{ width: scene.screen.width, height: scene.screen.height, filter, transition: 'filter 0.25s' }}
               onPointerEnter={() => setOverScreen(true)}
               onPointerLeave={() => setOverScreen(false)}
               // Dragging windows on the screen must not orbit the camera
@@ -299,7 +300,7 @@ export default function Scene({ children }: React.PropsWithChildren) {
         </primitive>
       </Center>
 
-      <ThemeButtons powered={on} />
+      <FilterButtons powered={on} />
       <PowerButton
         on={on}
         toggle={() => {

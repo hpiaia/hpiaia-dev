@@ -12,20 +12,20 @@ monitor of a retro gaming desk in a 3D bedroom scene.
 - Nothing is remembered between visits: the home page always starts with About, the command prompt and Winamp.
   Every app also has its own prerendered path (`/work/smartrr`, `/terminal`, ...) that opens just that app, for
   links and search engines. `/resume` still serves the pdf; the resume window lives at `/cv`.
-- ⌘K (or Start > Find) searches apps, jobs and links; F1 opens Help. The color scheme (Standard or Night), wallpaper,
-  command prompt colors and sounds are in Display Properties and persist in localStorage.
+- ⌘K (or Start > Find) searches apps, jobs and links; F1 opens Help. The color scheme (Standard or Night), wallpaper
+  and sounds are in Display Properties and persist in localStorage.
 - The **3D desk** button swaps the page for a react-three-fiber scene: a retro desk model, a wall of posters, three.js
   lights and shadows. The same desktop is projected onto the monitor with drei `Html`, scaled up so it stays legible,
   under a lighter set of CRT layers. Window drags are mapped through a homography so they follow the cursor despite
   the perspective transform (`src/lib/pointer.ts`). The scene is only loaded when you switch to it.
 - The Terminal app is a DOS-style command prompt on xterm.js, browsing a small C: drive (`src/lib/fs.ts`). Commands
   are plain functions in `src/lib/shell.ts` that return ANSI strings and an optional action. DOS commands (`dir`,
-  `type`, `cd..`, `cls`, `start`, `color 0A`, `ver`, `tree`) sit on top of the unix ones (`ls`, `cat`, `cd`, `clear`,
+  `type`, `cd..`, `cls`, `start`, `ver`, `tree`) sit on top of the unix ones (`ls`, `cat`, `cd`, `clear`,
   `open`, `pwd`), and both work on the same files. `help` lists them; `start <app>` opens desktop windows and `exit`
   closes the prompt.
 - Key presses anywhere on the desktop play Holy Panda switch samples through Web Audio.
-- On the 3D monitor, the four left buttons switch the prompt colors between gray, green, blue and amber, and the
-  power button turns the screen off to reveal reflective glass and the bedroom panorama.
+- On the 3D monitor, the four left buttons tint the screen like a green, blue or amber phosphor monitor (gray is
+  unfiltered), and the power button turns the screen off to reveal reflective glass and the bedroom panorama.
 - Game packaging uses custom artwork with a faded-print finish tuned in `src/lib/print.ts`. The same games sit on the
   right of the desktop with their box art; opening one asks for a CD that is not in drive D:.
 - Winamp is [Webamp](https://github.com/captbaritone/webamp) drawn straight onto the desktop, playing the albums on

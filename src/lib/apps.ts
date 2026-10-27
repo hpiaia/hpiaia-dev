@@ -12,7 +12,7 @@ export type App = {
 export const apps: App[] = [
   { key: 'about', title: 'About Me - WordPad', label: 'About Me', size: [720, 620], side: 'left' },
   { key: 'work', title: 'Exploring - Work', label: 'Work', size: [880, 600], side: 'left' },
-  { key: 'cv', title: 'resume.pdf', label: 'Resume', size: [780, 880], side: 'left' },
+  { key: 'cv', title: 'resume.pdf', label: 'Resume', size: [860, 880], side: 'left' },
   { key: 'terminal', title: 'Command Prompt', label: 'Terminal', size: [740, 480], side: 'left' },
   { key: 'skills', title: 'Skills', label: 'Skills', size: [660, 440], side: 'left' },
   { key: 'contact', title: 'Say Hi', label: 'Say Hi', size: [460, 420], side: 'left' },

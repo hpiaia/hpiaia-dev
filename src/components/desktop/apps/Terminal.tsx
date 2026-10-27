@@ -17,10 +17,10 @@ import { launchGame } from '@/lib/dialogs'
 import { defaultFont, fonts } from '@/lib/fonts'
 import { home } from '@/lib/fs'
 import { remapPointer } from '@/lib/pointer'
-import { getSetting, setSetting, useSetting, useSettings } from '@/lib/settings'
+import { getSetting, setSetting } from '@/lib/settings'
 import { bootLines, complete, prompt, run, startup } from '@/lib/shell'
 import { sleep, toBase64 } from '@/lib/utils'
-import { theme, xtermTheme } from '@/lib/theme'
+import { terminalBackground, xtermTheme } from '@/lib/theme'
 
 function fontFamily(key: string) {
   const font = fonts.find((f) => f.key === key) ?? fonts.find((f) => f.key === defaultFont) ?? fonts[0]
@@ -35,7 +35,6 @@ type Props = { active?: boolean; onExit?: () => void; onApp?: (key: AppKey, sub?
 export default function Terminal({ active = true, onExit, onApp }: Props) {
   const hostRef = useRef<HTMLDivElement>(null)
   const termRef = useRef<Xterm | null>(null)
-  const background = theme(useSetting('colors')).bg
   const handlers = useRef({ onExit, onApp })
   useEffect(() => {
     handlers.current = { onExit, onApp }
@@ -58,7 +57,7 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
       fontWeightBold: font.bold,
       fontSize: 16,
       lineHeight: 1,
-      theme: xtermTheme(getSetting('colors')),
+      theme: xtermTheme,
       linkHandler: { activate: (_, uri) => window.open(uri, '_blank', 'noreferrer'), allowNonHttpProtocols: true },
     })
     termRef.current = term
@@ -110,7 +109,6 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
         fontKey = action.key
         resize()
       }
-      if (action.type === 'theme') setSetting('colors', action.key)
       if (action.type === 'app') handlers.current.onApp?.(action.key, action.sub)
       if (action.type === 'game') {
         const game = games.find((g) => g.slug === action.slug)
@@ -191,9 +189,6 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
     })
     observer.observe(host)
     const unmap = remapPointer(host)
-    const untheme = useSettings.subscribe((settings, previous) => {
-      if (settings.colors !== previous.colors) term.options.theme = xtermTheme(settings.colors)
-    })
     void boot()
 
     return () => {
@@ -202,7 +197,6 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
       selection.dispose()
       observer.disconnect()
       unmap()
-      untheme()
       term.dispose()
     }
   }, [])
@@ -213,7 +207,7 @@ export default function Terminal({ active = true, onExit, onApp }: Props) {
   }, [active])
 
   return (
-    <div className="h-full px-2 py-1 select-none" style={{ background }}>
+    <div className="h-full px-2 py-1 select-none" style={{ background: terminalBackground }}>
       <div ref={hostRef} className="term h-full w-full" />
     </div>
   )

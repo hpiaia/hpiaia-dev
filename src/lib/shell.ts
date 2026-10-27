@@ -17,7 +17,6 @@ import {
 } from '@/lib/fs'
 import { fonts } from '@/lib/fonts'
 import { getSetting } from '@/lib/settings'
-import { themes } from '@/lib/theme'
 
 export type Action =
   | { type: 'clear' }
@@ -27,7 +26,6 @@ export type Action =
   | { type: 'copy'; text: string }
   | { type: 'sound'; on: boolean }
   | { type: 'cd'; path: string }
-  | { type: 'theme'; key: string }
   | { type: 'app'; key: AppKey; sub?: string }
   | { type: 'game'; slug: string }
   | { type: 'exit' }
@@ -82,13 +80,6 @@ function changeDir(path: string, ctx: Context, dos: boolean): Result {
   const target = normalize(path, ctx.cwd)
   if (!isDir(target)) return { out: [dos ? 'Invalid directory' : `cd: ${path}: no such directory`] }
   return { out: [], action: { type: 'cd', path: target } }
-}
-
-function setColor(key = ''): Result {
-  const found = themes.find((t) => t.key === key.toLowerCase() || t.code === key.toUpperCase())
-  if (!found)
-    return { out: [dim('color schemes:'), ...themes.map((t) => `  ${t.code}  ${t.key}`), dim('usage: color 0A')] }
-  return { out: [], action: { type: 'theme', key: found.key } }
 }
 
 function systemInfo(): Result {
@@ -201,7 +192,6 @@ const commands: Record<string, Command> = {
     run: ([name = ''], ctx) => start(name, ctx, 'start'),
   },
   cls: { usage: 'clear screen', dos: true, run: () => ({ out: [], action: { type: 'clear' } }) },
-  color: { usage: 'color [scheme|code]', dos: true, run: ([key]) => setColor(key) },
   ver: { usage: 'show version', dos: true, run: () => ({ out: ['', version, ''] }) },
   time: {
     usage: 'current time',
@@ -274,7 +264,6 @@ const commands: Record<string, Command> = {
       return { out: [dim(`font set to ${font.label}`)], action: { type: 'font', key } }
     },
   },
-  theme: { usage: 'theme [name]', run: ([key]) => setColor(key) },
   credits: {
     usage: 'who made what',
     run: () => {
@@ -362,17 +351,15 @@ export function complete(input: string, cwd = home): string[] {
   const candidates =
     first === 'font'
       ? match(fonts.map((f) => f.key))
-      : first === 'color' || first === 'theme'
-        ? match(themes.map((t) => t.key))
-        : first === 'sound'
-          ? match(['on', 'off'])
-          : first === 'open' || first === 'start' || first === 'copy'
-            ? match([
-                ...(first === 'copy' ? [] : [...apps.map((a) => a.key), ...aliases()]),
-                ...links.map((l) => l.alias),
-              ])
-            : // Unix commands complete in lowercase, DOS ones keep the drive's uppercase
-              completions(last, cwd).map((c) => (dosCommand(first) ? c : c.toLowerCase()))
+      : first === 'sound'
+        ? match(['on', 'off'])
+        : first === 'open' || first === 'start' || first === 'copy'
+          ? match([
+              ...(first === 'copy' ? [] : [...apps.map((a) => a.key), ...aliases()]),
+              ...links.map((l) => l.alias),
+            ])
+          : // Unix commands complete in lowercase, DOS ones keep the drive's uppercase
+            completions(last, cwd).map((c) => (dosCommand(first) ? c : c.toLowerCase()))
   return candidates.map((c) => `${head} ${c}`)
 }
 
