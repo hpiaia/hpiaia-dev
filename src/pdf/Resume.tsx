@@ -18,6 +18,8 @@ import { join } from 'node:path'
 import { Children, Fragment, cloneElement, isValidElement } from 'react'
 
 import { resume } from '@/content/resume'
+import { spans } from '@/lib/markdown'
+import { period } from '@/lib/utils'
 
 const ink = '#1b1d1e'
 const muted = '#5f6368'
@@ -171,21 +173,20 @@ function Pill({ children, style, color = ink }: { children: string; style?: Styl
 function Rich({ text }: { text: string }) {
   return (
     <Text>
-      {text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/).map((part, i) => {
-        const md = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
-        if (md)
+      {spans(text).map((span, i) => {
+        if (span.href)
           return (
-            <Link key={i} src={md[2]} style={{ color: accent, textDecoration: 'underline' }}>
-              {md[1]}
+            <Link key={i} src={span.href} style={{ color: accent, textDecoration: 'underline' }}>
+              {span.text}
             </Link>
           )
-        if (part.startsWith('**'))
+        if (span.bold)
           return (
             <Text key={i} style={s.bold}>
-              {part.slice(2, -2)}
+              {span.text}
             </Text>
           )
-        return part
+        return span.text
       })}
     </Text>
   )
@@ -203,16 +204,13 @@ function Section({ title, children, wrap = true }: { title: string; children: Re
   )
 }
 
-const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-const human = (ym: string) => (ym === 'now' ? 'Present' : `${months[Number(ym.slice(5)) - 1]} ${ym.slice(0, 4)}`)
-
 function JobView({ job, first }: { job: (typeof resume.jobs)[0]; first: boolean }) {
   return (
     <View style={first ? s.firstJob : s.job} wrap={false}>
       <View style={s.head}>
         <Text style={s.title}>{job.title}</Text>
         <Pill style={s.when} color={accent}>
-          {`${human(job.from)} – ${human(job.to)}`}
+          {period(job.from, job.to)}
         </Pill>
       </View>
       <View style={s.company}>

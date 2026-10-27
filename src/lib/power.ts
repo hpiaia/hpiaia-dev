@@ -1,6 +1,7 @@
 import { audio } from '@/lib/keys'
+import { getSetting } from '@/lib/settings'
 
-const enabled = () => localStorage.getItem('sound') !== 'off'
+const enabled = () => getSetting('sound') === 'on'
 
 function tone(
   ctx: AudioContext,
@@ -70,4 +71,12 @@ export function powerOff() {
   tone(ctx, 'sine', 12000, 120, t + 0.01, 0.3, 0.06 * level)
   tone(ctx, 'sine', 65, 24, t + 0.02, 0.3, 0.1 * level)
   noise(ctx, t + 0.05, 0.35, 0.08 * level, 1500, 0.4)
+}
+
+export function errorChime() {
+  if (!enabled()) return
+  const ctx = audio()
+  const t = ctx.currentTime
+  tone(ctx, 'triangle', 660, 660, t, 0.18, 0.08 * level)
+  tone(ctx, 'triangle', 440, 440, t + 0.12, 0.3, 0.08 * level)
 }

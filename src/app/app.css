@@ -1,7 +1,9 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where([data-appearance='dark'], [data-appearance='dark'] *));
+
 @theme {
-  --font-sans: var(--font-mono), ui-monospace, monospace;
+  --font-sans: Tahoma, Verdana, 'Segoe UI', Geneva, sans-serif;
 
   --color-screen: #040a06;
   --color-ph: #9dff9f;
@@ -9,21 +11,247 @@
   --color-faint: #1c3a22;
 }
 
+@theme inline {
+  --color-face: var(--w-face);
+  --color-light: var(--w-light);
+  --color-shadow: var(--w-shadow);
+  --color-window: var(--w-window);
+  --color-ink: var(--w-ink);
+  --color-muted: var(--w-muted);
+  --color-select: var(--w-select);
+  --color-select-ink: var(--w-select-ink);
+  --color-desktop: var(--w-desktop);
+}
+
 :root {
   --font-mono: var(--font-ubuntu-mono);
   --weight-body: 400;
   --weight-hero: 400;
-  --zoom: 1;
   --glow-rgb: 120 255 140;
   --glow: 0 0 4px rgb(var(--glow-rgb) / 0.7);
   --image-filter: grayscale(1) invert(1) brightness(0.9) sepia(1) hue-rotate(65deg) saturate(3) contrast(1.1);
+
+  --w-face: #c0c0c0;
+  --w-hilite: #ffffff;
+  --w-light: #dfdfdf;
+  --w-shadow: #808080;
+  --w-dark: #0a0a0a;
+  --w-window: #ffffff;
+  --w-ink: #000000;
+  --w-muted: #808080;
+  --w-select: #000080;
+  --w-select-ink: #ffffff;
+  --w-title: linear-gradient(90deg, #000080, #1084d0);
+  --w-title-off: linear-gradient(90deg, #808080, #b5b5b5);
+  --w-title-ink-off: #d4d0c8;
+  --w-desktop: #008080;
+  color-scheme: light;
+}
+
+[data-appearance='dark'] {
+  --w-face: #3c3c3c;
+  --w-hilite: #6e6e6e;
+  --w-light: #505050;
+  --w-shadow: #1f1f1f;
+  --w-dark: #000000;
+  --w-window: #1e1e1e;
+  --w-ink: #ececec;
+  --w-muted: #9a9a9a;
+  --w-select: #2d5c9a;
+  --w-select-ink: #ffffff;
+  --w-title: linear-gradient(90deg, #14305c, #3a6cad);
+  --w-title-off: linear-gradient(90deg, #444, #5e5e5e);
+  --w-title-ink-off: #a8a8a8;
+  --w-desktop: #0e3535;
+  color-scheme: dark;
+}
+
+@utility bevel {
+  box-shadow:
+    inset -1px -1px var(--w-dark),
+    inset 1px 1px var(--w-hilite),
+    inset -2px -2px var(--w-shadow),
+    inset 2px 2px var(--w-light);
+}
+
+@utility bevel-window {
+  box-shadow:
+    inset -1px -1px var(--w-dark),
+    inset 1px 1px var(--w-light),
+    inset -2px -2px var(--w-shadow),
+    inset 2px 2px var(--w-hilite);
+}
+
+@utility bevel-in {
+  box-shadow:
+    inset -1px -1px var(--w-hilite),
+    inset 1px 1px var(--w-shadow),
+    inset -2px -2px var(--w-light),
+    inset 2px 2px var(--w-dark);
+}
+
+@utility bevel-thin {
+  box-shadow:
+    inset -1px -1px var(--w-shadow),
+    inset 1px 1px var(--w-hilite);
+}
+
+@utility bevel-thin-in {
+  box-shadow:
+    inset -1px -1px var(--w-hilite),
+    inset 1px 1px var(--w-shadow);
+}
+
+@utility etched {
+  border: 1px solid var(--w-shadow);
+  box-shadow:
+    inset 1px 1px var(--w-hilite),
+    1px 1px var(--w-hilite);
+}
+
+/* Tabs bevel on top and sides only: the panel's own top edge runs under the inactive ones,
+   and the selected tab covers it so the two read as one surface */
+@utility tab {
+  border-radius: 4px 4px 0 0;
+  box-shadow:
+    inset -1px 0 var(--w-dark),
+    inset 1px 1px var(--w-hilite),
+    inset -2px 0 var(--w-shadow),
+    inset 2px 2px var(--w-light);
+}
+
+@utility title-on {
+  background: var(--w-title);
+  color: #fff;
+}
+
+@utility title-off {
+  background: var(--w-title-off);
+  color: var(--w-title-ink-off);
 }
 
 html,
 body {
   height: 100%;
-  user-select: none;
-  -webkit-user-select: none;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: var(--w-desktop);
+  color: var(--w-ink);
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+
+::selection {
+  color: var(--w-select-ink);
+  background-color: var(--w-select);
+}
+
+.scroll-98 {
+  scrollbar-color: var(--w-face) var(--w-light);
+}
+
+.scroll-98::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+  background: repeating-conic-gradient(var(--w-face) 0 25%, var(--w-hilite) 0 50%) 0 0 / 2px 2px;
+}
+
+.scroll-98::-webkit-scrollbar-thumb {
+  background: var(--w-face);
+  box-shadow:
+    inset -1px -1px var(--w-dark),
+    inset 1px 1px var(--w-light),
+    inset -2px -2px var(--w-shadow),
+    inset 2px 2px var(--w-hilite);
+}
+
+.scroll-98::-webkit-scrollbar-corner {
+  background: var(--w-face);
+}
+
+/* The Start menu always opens above Start, with submenus to the right of their row. Radix positions menus
+   from screen coordinates, which land in the wrong place once the desktop is under the 3D monitor's
+   perspective, so the wrappers are pinned with plain CSS instead */
+.start-anchor > [data-radix-popper-content-wrapper] {
+  position: absolute !important;
+  inset: auto auto calc(100% - 2px) 2px !important;
+  transform: none !important;
+  min-width: 0 !important;
+}
+
+.start-sub > [data-radix-popper-content-wrapper] {
+  position: absolute !important;
+  inset: auto auto -3px 100% !important;
+  transform: none !important;
+  min-width: 0 !important;
+}
+
+/* Winamp sits on the desktop without a frame: only its own windows and menus take clicks */
+.winamp-stage .window,
+#webamp-context-menu {
+  pointer-events: auto;
+}
+
+.dither {
+  background: repeating-conic-gradient(var(--w-face) 0 25%, var(--w-hilite) 0 50%) 0 0 / 2px 2px;
+}
+
+.focus-dotted:focus-visible {
+  outline: 1px dotted var(--w-ink);
+  outline-offset: -4px;
+}
+
+[data-dragging] iframe {
+  pointer-events: none;
+}
+
+.wallpaper {
+  background: var(--w-desktop);
+}
+
+[data-wallpaper='clouds'] .wallpaper {
+  background: #000 url('/wallpapers/clouds.png') center / cover no-repeat;
+}
+
+[data-wallpaper='windows-98'] .wallpaper {
+  background: #000 url('/wallpapers/windows-98.jpg') center / cover no-repeat;
+}
+
+[data-wallpaper='space'] .wallpaper {
+  background: #000 url('/wallpapers/space.jpg') center / cover no-repeat;
+}
+
+[data-wallpaper='underwater'] .wallpaper {
+  background: #000 url('/wallpapers/underwater.jpg') center / cover no-repeat;
+}
+
+[data-wallpaper='carved-stone'] .wallpaper {
+  background: url('/wallpapers/carved-stone.png') repeat;
+  image-rendering: pixelated;
+}
+
+[data-wallpaper='bubbles'] .wallpaper {
+  background: url('/wallpapers/bubbles.png') repeat;
+  image-rendering: pixelated;
+}
+
+[data-wallpaper='forest'] .wallpaper {
+  background: url('/wallpapers/forest.png') repeat;
+  image-rendering: pixelated;
+}
+
+[data-wallpaper='blue-rivets'] .wallpaper {
+  background: url('/wallpapers/blue-rivets.png') repeat;
+  image-rendering: pixelated;
+}
+
+[data-appearance='dark']:not([data-wallpaper='teal']) .wallpaper {
+  filter: brightness(0.6);
+}
+
+.crt {
+  position: relative;
+  overflow: hidden;
   background: var(--color-screen);
   color: var(--color-ph);
   font-family: var(--font-mono), ui-monospace, monospace;
@@ -33,27 +261,17 @@ body {
     var(--glow),
     1px 0 0 rgba(255, 80, 80, 0.25),
     -1px 0 0 rgba(80, 160, 255, 0.25);
+  container-type: inline-size;
 }
 
-* {
+.crt * {
   scrollbar-width: none;
 }
 
-::-webkit-scrollbar {
-  display: none;
-}
-
-::selection {
+.crt ::selection {
   color: var(--color-screen);
   background-color: var(--color-ph);
   text-shadow: none;
-}
-
-.crt {
-  position: relative;
-  overflow: hidden;
-  background: var(--color-screen);
-  container-type: inline-size;
 }
 
 .crt-screen {
@@ -113,9 +331,28 @@ body {
   background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.7));
 }
 
-.crt--monitor .crt-layer,
-.crt--monitor .crt-screen {
-  border-radius: 0.5rem;
+.crt.crt--desk {
+  background: var(--w-desktop);
+  color: var(--w-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: auto;
+  text-shadow: none;
+}
+
+.crt--desk > .crt-screen {
+  filter: contrast(1.06) saturate(1.1);
+}
+
+.crt--desk > .crt-screen > .crt-scanlines {
+  opacity: 0.35;
+}
+
+.crt--desk > .crt-screen > .crt-grain {
+  opacity: 0.05;
+}
+
+.crt--desk > .crt-screen > .crt-vignette {
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.45));
 }
 
 @keyframes sweep {
@@ -196,35 +433,15 @@ body {
 }
 
 .term .xterm-viewport {
+  scrollbar-width: none;
+}
+
+.term .xterm-viewport {
   background: transparent !important;
-}
-
-.term .xterm-screen,
-.term .xterm-rows {
-  text-shadow: var(--glow);
-}
-
-.term .xterm-image-layer {
-  filter: var(--image-filter);
-  mix-blend-mode: screen;
 }
 
 .dim {
   color: var(--color-dim);
-}
-
-button {
-  color: var(--color-ph);
-  cursor: pointer;
-}
-
-button:hover:not(:disabled) {
-  color: white;
-}
-
-button:disabled {
-  color: var(--color-dim);
-  cursor: default;
 }
 
 .cursor {
@@ -247,8 +464,7 @@ button:disabled {
   .crt-sweep {
     display: none;
   }
-  html,
-  body {
+  .crt {
     text-shadow: var(--glow);
   }
 }

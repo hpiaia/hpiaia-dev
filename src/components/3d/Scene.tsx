@@ -5,11 +5,12 @@ import { Canvas, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useState } from 'react'
 import { type Group, type Mesh, MeshStandardMaterial, type PerspectiveCamera, Shape, type Texture } from 'three'
 
-import { Wall } from '@/components/Wall'
-import { useMobile, usePortrait } from '@/lib/media'
+import { Wall } from '@/components/3d/Wall'
+import { useMobile, usePortrait } from '@/lib/hooks'
 import { buttonClick, powerOff, powerOn } from '@/lib/power'
 import { printedMaterial } from '@/lib/print'
-import { applyTheme, setTheme, theme as themeOf, themes, useTheme } from '@/lib/theme'
+import { setSetting, useSetting } from '@/lib/settings'
+import { themes } from '@/lib/theme'
 
 const scene = {
   file: '/models/desk.glb',
@@ -104,7 +105,7 @@ function Led({
 }
 
 function ThemeButtons({ powered }: { powered: boolean }) {
-  const active = useTheme()
+  const active = useSetting('colors')
   const [hovered, setHovered] = useState(false)
   useCursor(hovered)
   const shape = useMemo(() => roundedRect(scene.buttons.size[0], scene.buttons.size[1], scene.buttons.radius), [])
@@ -118,7 +119,7 @@ function ThemeButtons({ powered }: { powered: boolean }) {
               if (!powered) return
               e.stopPropagation()
               buttonClick()
-              setTheme(t.key)
+              setSetting('colors', t.key)
             }}
             onPointerOver={() => setHovered(powered)}
             onPointerOut={() => setHovered(false)}
@@ -126,7 +127,7 @@ function ThemeButtons({ powered }: { powered: boolean }) {
             <shapeGeometry args={[shape]} />
             <meshBasicMaterial color="#ff00ff" transparent opacity={scene.debug ? 0.6 : 0} depthWrite={false} />
           </mesh>
-          <Led position={[0, scene.buttons.led, 0]} color={t.fg} on={powered && active === t.key} powered={powered} />
+          <Led position={[0, scene.buttons.led, 0]} color={t.led} on={powered && active === t.key} powered={powered} />
         </group>
       ))}
     </group>
@@ -244,8 +245,7 @@ export default function Scene({ children }: React.PropsWithChildren) {
   const [overScreen, setOverScreen] = useState(false)
   const [power, setPower] = useState<'boot' | 'on' | 'off'>('boot')
   const on = power !== 'off'
-  const themeKey = useTheme()
-  useEffect(() => applyTheme(themeKey), [themeKey])
+  const glow = useSetting('appearance') === 'dark' ? '#9fb0ff' : '#fff1d6'
   const model = useGLTF(mobile ? scene.mobileFile : scene.file)
 
   useEffect(() => {
@@ -290,6 +290,8 @@ export default function Scene({ children }: React.PropsWithChildren) {
               style={{ width: scene.screen.width, height: scene.screen.height }}
               onPointerEnter={() => setOverScreen(true)}
               onPointerLeave={() => setOverScreen(false)}
+              // Dragging windows on the screen must not orbit the camera
+              onPointerDown={(e) => e.stopPropagation()}
             >
               {children}
             </div>
@@ -334,7 +336,7 @@ export default function Scene({ children }: React.PropsWithChildren) {
       />
       <pointLight position={[-4, 2.2, 1.5]} intensity={18} distance={9} color="#ffffff" />
       <pointLight position={[4.5, 2.6, 1.8]} intensity={16} distance={9} color="#ffffff" />
-      {on && <pointLight position={[0, 1.6, 1.4]} intensity={4} distance={4} color={themeOf(themeKey).fg} />}
+      {on && <pointLight position={[0, 1.6, 1.4]} intensity={4} distance={4} color={glow} />}
       {!mobile && <ContactShadows position-y={scene.floor} scale={5} blur={3} />}
     </Canvas>
   )
