@@ -60,8 +60,7 @@ The resume is data in `src/content/resume.ts`, rendered to PDF with `@react-pdf/
 - Command prompt font: IBM VGA 8x16 from the [Ultimate Oldschool PC Font Pack](https://int10h.org/oldschool-pc-fonts/)
   by VileR, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) (license in `public/fonts/IBM-VGA-LICENSE.txt`).
 - Game icons: the games' own executable icons, © their publishers, from [SteamGridDB](https://www.steamgriddb.com)
-  (World of Warcraft, Grand Chase, Last Chaos, Need for Speed Underground 2, Blood), the official WYD Global site,
-  MU Online's Steam store icon, and a fan-made round icon for Metin2 (DeviantArt).
+  (World of Warcraft, Grand Chase, Last Chaos, Need for Speed Underground 2, Blood) and the official WYD Global site.
 - Wallpapers: the Windows 98 originals, © Microsoft, via the
   [Windows Wallpaper Wiki](https://windowswallpaper.miraheze.org/wiki/Windows_98).
 - Winamp: [Webamp](https://github.com/captbaritone/webamp) by Jordan Eldredge, MIT. Songs stream from their YouTube
