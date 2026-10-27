@@ -196,7 +196,7 @@ export function Taskbar({ compact, onFind, onShutdown }: Props) {
           className="flex items-center gap-1"
         >
           <ui.cube className="size-[16px]" />
-          {!compact && <span>{toDesk ? '3D' : 'Exit 3D'}</span>}
+          <span className="@max-[639px]/desk:hidden">{toDesk ? '3D' : 'Exit 3D'}</span>
         </button>
         <button
           type="button"

@@ -4,13 +4,15 @@ import { PlayerState, type YouTubePlayer } from '@/lib/youtube'
 type Listener = (...args: unknown[]) => void
 
 // Webamp constructs the media object itself, so the YouTube player reaches it through here.
-// `player` is set only once YouTube is ready; until then loads are queued and the volume remembered
+// `player` is set only once YouTube is ready; until then loads are queued and the volume remembered.
+// YouTube (~800 KB) loads on the first play, through `start`, not when Winamp first draws
 export const bridge: {
   player: YouTubePlayer | null
   media: YouTubeMedia | null
   queued: { id: string; play: boolean } | null
   volume: number
-} = { player: null, media: null, queued: null, volume: 75 }
+  start: (() => void) | null
+} = { player: null, media: null, queued: null, volume: 75, start: null }
 
 // The tray's speaker mutes Winamp along with the rest of the system sounds
 const applyMute = (player: YouTubePlayer, sound: 'on' | 'off') => (sound === 'off' ? player.mute() : player.unMute())
@@ -97,7 +99,9 @@ export class YouTubeMedia {
   }
 
   async play() {
-    bridge.player?.playVideo()
+    if (bridge.player) return bridge.player.playVideo()
+    if (bridge.queued) bridge.queued.play = true
+    bridge.start?.()
   }
 
   pause() {
@@ -121,6 +125,7 @@ export class YouTubeMedia {
     this.loading = true
     if (!bridge.player) {
       bridge.queued = { id, play: autoPlay }
+      if (autoPlay) bridge.start?.()
       return
     }
     if (autoPlay) bridge.player.loadVideoById(id)

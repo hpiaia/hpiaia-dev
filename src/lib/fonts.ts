@@ -14,20 +14,36 @@ import {
 } from 'next/font/google'
 import localFont from 'next/font/local'
 
+// Only the default font is preloaded; the others are picked in Display settings and load on demand
 // IBM VGA 8x16 from the Ultimate Oldschool PC Font Pack by VileR, CC BY-SA 4.0
 const vga = localFont({ src: '../../public/fonts/IBM-VGA-8x16.woff', variable: '--font-vga' })
-const vt323 = VT323({ subsets: ['latin'], weight: '400', variable: '--font-vt323' })
-const doto = Doto({ subsets: ['latin'], weight: ['700', '900'], variable: '--font-doto' })
-const dotgothic16 = DotGothic16({ subsets: ['latin'], weight: '400', variable: '--font-dotgothic16' })
-const shareTechMono = Share_Tech_Mono({ subsets: ['latin'], weight: '400', variable: '--font-share-tech-mono' })
-const pixelifySans = Pixelify_Sans({ subsets: ['latin'], variable: '--font-pixelify-sans' })
-const silkscreen = Silkscreen({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-silkscreen' })
-const workbench = Workbench({ subsets: ['latin'], variable: '--font-workbench' })
-const handjet = Handjet({ subsets: ['latin'], variable: '--font-handjet' })
-const ubuntuMono = Ubuntu_Mono({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-ubuntu-mono' })
-const firaMono = Fira_Mono({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-fira-mono' })
-const novaMono = Nova_Mono({ subsets: ['latin'], weight: '400', variable: '--font-nova-mono' })
-const sometypeMono = Sometype_Mono({ subsets: ['latin'], variable: '--font-sometype-mono' })
+const vt323 = VT323({ subsets: ['latin'], preload: false, weight: '400', variable: '--font-vt323' })
+const doto = Doto({ subsets: ['latin'], preload: false, weight: ['700', '900'], variable: '--font-doto' })
+const dotgothic16 = DotGothic16({ subsets: ['latin'], preload: false, weight: '400', variable: '--font-dotgothic16' })
+const shareTechMono = Share_Tech_Mono({
+  subsets: ['latin'],
+  preload: false,
+  weight: '400',
+  variable: '--font-share-tech-mono',
+})
+const pixelifySans = Pixelify_Sans({ subsets: ['latin'], preload: false, variable: '--font-pixelify-sans' })
+const silkscreen = Silkscreen({
+  subsets: ['latin'],
+  preload: false,
+  weight: ['400', '700'],
+  variable: '--font-silkscreen',
+})
+const workbench = Workbench({ subsets: ['latin'], preload: false, variable: '--font-workbench' })
+const handjet = Handjet({ subsets: ['latin'], preload: false, variable: '--font-handjet' })
+const ubuntuMono = Ubuntu_Mono({
+  subsets: ['latin'],
+  preload: false,
+  weight: ['400', '700'],
+  variable: '--font-ubuntu-mono',
+})
+const firaMono = Fira_Mono({ subsets: ['latin'], preload: false, weight: ['400', '700'], variable: '--font-fira-mono' })
+const novaMono = Nova_Mono({ subsets: ['latin'], preload: false, weight: '400', variable: '--font-nova-mono' })
+const sometypeMono = Sometype_Mono({ subsets: ['latin'], preload: false, variable: '--font-sometype-mono' })
 
 export const fonts = [
   { key: 'vga', label: 'IBM VGA 8x16', variable: '--font-vga', weight: 400, heroWeight: 400 },

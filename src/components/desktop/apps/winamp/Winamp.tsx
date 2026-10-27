@@ -46,25 +46,31 @@ export function Winamp({ win, compact }: { win: Win; compact: boolean }) {
     let youtube: YouTubePlayer | null = null
 
     async function start() {
-      const [{ default: Webamp }, YT] = await Promise.all([import('webamp'), loadYouTube()])
+      const { default: Webamp } = await import('webamp')
       if (disposed || !stage.current || !player.current) return
 
-      const host = document.createElement('div')
-      player.current.replaceChildren(host)
-      const created = new YT.Player(host, {
-        host: 'https://www.youtube-nocookie.com',
-        width: 200,
-        height: 200,
-        playerVars: { playsinline: 1, rel: 0 },
-        events: {
-          onReady: () => {
-            if (!disposed) playerReady(created)
-          },
-          onStateChange: (e) => bridge.media?.playerState(e.data),
-          onError: (e) => bridge.media?.playerError(e.data),
-        },
-      })
-      youtube = created
+      bridge.start = () => {
+        bridge.start = null
+        void loadYouTube().then((YT) => {
+          if (disposed || !player.current) return
+          const host = document.createElement('div')
+          player.current.replaceChildren(host)
+          const created = new YT.Player(host, {
+            host: 'https://www.youtube-nocookie.com',
+            width: 200,
+            height: 200,
+            playerVars: { playsinline: 1, rel: 0 },
+            events: {
+              onReady: () => {
+                if (!disposed) playerReady(created)
+              },
+              onStateChange: (e) => bridge.media?.playerState(e.data),
+              onError: (e) => bridge.media?.playerError(e.data),
+            },
+          })
+          youtube = created
+        })
+      }
 
       instance = new Webamp({
         initialTracks: playlist,
@@ -73,8 +79,8 @@ export function Winamp({ win, compact }: { win: Win; compact: boolean }) {
         __customMediaClass: YouTubeMedia,
       })
       if (!small.current) {
-        const x = stage.current.clientWidth - 504
-        const y = Math.round(stage.current.clientHeight * 0.1744)
+        const x = stage.current.clientWidth - 430
+        const y = Math.round(stage.current.clientHeight * 0.177)
         instance.store.dispatch({
           type: 'UPDATE_WINDOW_POSITIONS',
           positions: { main: { x, y }, playlist: { x, y: y + 116 } },
@@ -97,6 +103,7 @@ export function Winamp({ win, compact }: { win: Win; compact: boolean }) {
       youtube?.destroy()
       bridge.player = null
       bridge.queued = null
+      bridge.start = null
     }
   }, [])
 
