@@ -10,7 +10,7 @@ export const resume = {
     { key: 'Location', text: 'Santa Catarina, Brazil' },
   ],
   about:
-    'Senior full stack engineer with 12+ years building and running web products end to end, working remotely with US teams since 2021. I write the product code in **TypeScript** (React, Next.js, Node.js), PHP and Go, and run the infrastructure under it on **AWS** with **Terraform**, **Docker** and **Kubernetes**.',
+    'Senior full stack engineer with 12+ years building and running web products end to end, working remotely with US teams since 2021. I write the product code in **TypeScript** (React, Next.js, Node.js), PHP and Go, and run the infrastructure under it on **AWS** with **Terraform**, **Docker** and **Kubernetes**. Day to day I work with Claude Code, Codex and Cursor; AI-assisted and agentic coding is part of how my current teams ship.',
   jobs: [
     {
       title: 'Senior Full Stack Engineer',
@@ -24,6 +24,7 @@ export const resume = {
       bullets: [
         'Built the [cross-chain bridge](https://bridge.constellationnetwork.io/) that moves assets between Constellation and EVM chains (Ethereum, Base, Ink), from the smart contract integration to the web app.',
         'Maintained and evolved the [Dor](https://www.getdor.com/) and [Dor Traffic Miner](https://constellationnetwork.io/dtm/) platforms, a network of foot-traffic sensors: new features, bug fixes and a steady rise in test coverage. Node.js, TypeScript, AWS Lambda, Kinesis, SQS, SNS.',
+        'Built two MCP servers on the Dor API: one for customers, giving AI assistants access to everything the platform offers (foot traffic per store, sensor data, conversion), and one for the internal team, covering customers, stores, sensors and support tickets, which support and sales use to pull insights and resolve issues.',
         "Helped build and maintain the network's decentralized exchange frontend and indexer, and the DAG Explorer.",
         'Managed the AWS infrastructure with Terraform and SST (Pulumi), with CI/CD on GitHub Actions and CircleCI.',
       ],
@@ -109,6 +110,7 @@ export const resume = {
     ],
     ['Infrastructure', 'AWS, Lambda, ECS, SQS, SNS, Kinesis, RDS, Terraform, Kubernetes, Docker'],
     ['CI/CD & testing', 'GitHub Actions, CircleCI, Vitest, Jest, End-to-end testing'],
+    ['AI tooling', 'MCP, Claude Code, Codex, Cursor'],
   ],
   education: [
     { field: 'Computer Science', school: 'Universidade Federal da Fronteira Sul (UFFS)', from: '2014', to: '2019' },
