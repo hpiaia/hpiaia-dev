@@ -38,3 +38,6 @@ next-env.d.ts
 
 # agent worktrees
 .claude/worktrees/
+
+# orb portal metadata
+.amp/portals/*

@@ -16,6 +16,12 @@ pnpm lint     # eslint
 pnpm format   # prettier
 ```
 
+### Amp orbs
+
+`.agents/setup` uses the orb's preinstalled Node.js, ensures pnpm matches `package.json`, and installs dependencies
+with `pnpm install --frozen-lockfile`. Amp snapshots the prepared environment for new orbs; rerunning setup reuses
+the installed dependencies and pnpm cache. No secrets, backing services, or resume hook are required.
+
 ## What's in it
 
 - **Desktop.** Icons, a taskbar with a Start menu, and windows you can drag, resize, minimize and maximize. ⌘K (or
