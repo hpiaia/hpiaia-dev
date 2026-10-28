@@ -39,8 +39,9 @@ export const resume = {
       from: '2023-10',
       to: '2024-03',
       bullets: [
-        'Moved backend background processing onto Temporal.io, replacing legacy cron jobs with durable, recurring workflows.',
-        'Migrated the Shopify app frontend from Gatsby to Next.js, cutting build times by **80%**.',
+        'Built backend features for a Shopify subscriptions app and improved the performance of its legacy system.',
+        'Moved subscription billing and renewals from legacy cron jobs onto Temporal.io durable workflows, making them reliable, retryable and far easier to trace and debug.',
+        "Migrated the Shopify app frontend from Gatsby to Next.js, cutting build times by **80%** and greatly improving the frontend team's developer experience.",
         'Raised test coverage and moved every suite from Jest to Vitest with SWC, making test runs **75%** faster.',
       ],
     },
@@ -66,7 +67,8 @@ export const resume = {
       to: '2021-08',
       bullets: [
         'Designed and ran the communication architecture for **100+ dockerized microservices** on Kubernetes (AKS).',
-        'Built services and improved their architecture with TypeScript, Node.js, RabbitMQ and PostgreSQL.',
+        'Migrated the entire Kubernetes cluster from Google Cloud (GCP) to Azure.',
+        'Built services and improved their architecture with TypeScript, Node.js (NestJS), RabbitMQ and PostgreSQL.',
         'Built the CI/CD pipelines on GitHub Actions and Azure.',
         'Set up cluster observability with Grafana, New Relic, Linkerd and Graylog.',
       ],
@@ -79,10 +81,8 @@ export const resume = {
       from: '2017-12',
       to: '2019-07',
       bullets: [
-        'Built a web crawler from scratch with queue management handling **100,000+ jobs per day**, in PHP/Laravel with Redis and MongoDB.',
-        'Deployed the crawler serverless on AWS Lambda so it scaled horizontally on its own, lowering costs while improving performance.',
-        'Led the design of an internal C# / .NET Core framework that standardized how new products were built, making the team faster and the products more consistent.',
-        'Built the framework with Domain-Driven Design, a multitier architecture and TDD, reaching **70%** test coverage, plus a React + TypeScript design system for the front end.',
+        'Built a web crawler from scratch handling **100,000+ jobs per day** in PHP/Laravel with Redis and MongoDB, deployed serverless on AWS Lambda so it scaled horizontally on its own at lower cost.',
+        'Led the design of an internal C# / .NET Core framework, built with Domain-Driven Design and TDD to **70%** test coverage, plus a React + TypeScript design system, that standardized how new products were built.',
       ],
     },
     {
@@ -114,7 +114,7 @@ export const resume = {
     ['Frontend', 'React, Next.js, Vue, Angular, React Native'],
     [
       'Backend',
-      'Node.js, Laravel, Symfony, .NET Core, Temporal, PostgreSQL, Redis, MongoDB, OpenSearch, RabbitMQ, Kafka',
+      'Node.js, NestJS, Laravel, Symfony, .NET Core, Temporal, PostgreSQL, Redis, MongoDB, OpenSearch, RabbitMQ, Kafka',
     ],
     ['Infrastructure', 'AWS, Lambda, ECS, SQS, SNS, Kinesis, RDS, Terraform, Kubernetes, Docker'],
     ['CI/CD & testing', 'GitHub Actions, CircleCI, Vitest, Jest, End-to-end testing'],

@@ -17,7 +17,7 @@ export const site = {
   description:
     'Humberto Piaia is a senior full stack engineer in Brazil with 12+ years shipping TypeScript, React, Node.js, Go and AWS products for remote US teams.',
   // Bump when the resume or the site copy changes: it feeds the sitemap's lastmod and the schema's dateModified
-  updated: '2026-10-27',
+  updated: '2026-10-28',
   user: 'hpiaia',
   version: '4.10',
   host: 'dev',
