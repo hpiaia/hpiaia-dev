@@ -46,6 +46,22 @@ export const albums: Album[] = [
     ],
   },
   {
+    slug: 'jar-of-flies',
+    artist: 'Alice in Chains',
+    title: 'Jar of Flies',
+    year: 1994,
+    cover: '/posters/alice-in-chains-jar-of-flies.jpg',
+    tracks: [
+      { title: 'Rotten Apple', youtube: 'LDOApsYhtrk', seconds: 420 },
+      { title: 'Nutshell', youtube: 'G23iLGhh9lo', seconds: 261 },
+      { title: 'I Stay Away', youtube: 'ODTv9Lt5WYs', seconds: 252 },
+      { title: 'No Excuses', youtube: 'r80HF68KM8g', seconds: 254 },
+      { title: 'Whale & Wasp', youtube: 'zGQuYs53PN4', seconds: 158 },
+      { title: "Don't Follow", youtube: '2SVR6Y4Gs28', seconds: 264 },
+      { title: 'Swing on This', youtube: 'Qs-NrNEJH2s', seconds: 246 },
+    ],
+  },
+  {
     slug: 'ok-computer',
     artist: 'Radiohead',
     title: 'OK Computer',
