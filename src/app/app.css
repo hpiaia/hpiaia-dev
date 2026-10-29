@@ -110,14 +110,15 @@
 }
 
 /* Tabs bevel on top and sides only: the panel's own top edge runs under the inactive ones,
-   and the selected tab covers it so the two read as one surface */
+   and the selected tab covers it so the two read as one surface. The edges match bevel-window's
+   so the selected tab's sides run straight into the panel's */
 @utility tab {
   border-radius: 4px 4px 0 0;
   box-shadow:
     inset -1px 0 var(--w-dark),
-    inset 1px 1px var(--w-hilite),
+    inset 1px 1px var(--w-light),
     inset -2px 0 var(--w-shadow),
-    inset 2px 2px var(--w-light);
+    inset 2px 2px var(--w-hilite);
 }
 
 @utility title-on {

@@ -15,8 +15,8 @@ import { app, type AppKey, apps, pathOf } from '@/lib/apps'
 import { launchGame } from '@/lib/dialogs'
 import { useKeyboardSounds } from '@/lib/hooks'
 import { documentTitle } from '@/lib/seo'
-import { getSetting, setSetting, useSetting } from '@/lib/settings'
-import { closeAll, open, setBounds, toggleMaximize, useWindows, type Win } from '@/lib/windows'
+import { getSetting, useSetting } from '@/lib/settings'
+import { closeAll, open, setBounds, switchView, takeSwitch, toggleMaximize, useWindows, type Win } from '@/lib/windows'
 
 type Props = { initial: { key: AppKey; sub?: string } }
 
@@ -133,24 +133,19 @@ export function Desktop({ initial }: Props) {
     id: 'view',
     label: toDesk ? '3D' : 'Exit 3D',
     icon: <CubeIcon className="size-10" />,
-    run: () => setSetting('view', toDesk ? 'desk' : 'screen'),
+    run: () => switchView(toDesk ? 'desk' : 'screen'),
   }
   useKeyboardSounds()
 
   useLayoutEffect(() => {
     const el = layer.current as HTMLDivElement
-    // Switching between the screen and the 3D desk swaps in that view's windows. Waits for a real size, since
-    // the screen layout is relative to it
-    let switched = started && shownView !== view
     shownView = view
     const measure = () => {
       // drei detaches the monitor's desktop before unmounting it, and its 0x0 would squash the new view's windows
       if (shownView !== view || el.clientWidth === 0) return
       setBounds(el.clientWidth, el.clientHeight)
-      if (switched) {
-        switched = false
-        home()
-      }
+      // Waits for a real size, since the screen layout is relative to it
+      if (started && takeSwitch()) home()
     }
     measure()
     if (!started) {

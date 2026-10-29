@@ -5,7 +5,8 @@ import { CrtScene } from '@/components/3d/CrtScene'
 import { Desktop } from '@/components/desktop/Desktop'
 import { ui } from '@/components/desktop/icons'
 import type { AppKey } from '@/lib/apps'
-import { setSetting, useSetting } from '@/lib/settings'
+import { useSetting } from '@/lib/settings'
+import { switchView } from '@/lib/windows'
 
 type Props = { initial: { key: AppKey; sub?: string } }
 
@@ -36,7 +37,7 @@ export function Computer({ initial }: Props) {
       </CrtScene>
       <button
         type="button"
-        onClick={() => setSetting('view', 'screen')}
+        onClick={() => switchView('screen')}
         className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-face px-3 py-1.5 text-ink bevel active:bevel-in active:[&>*]:translate-x-px active:[&>*]:translate-y-px"
       >
         <span className="flex items-center gap-1.5">

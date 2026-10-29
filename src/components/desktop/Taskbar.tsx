@@ -12,7 +12,7 @@ import { launchGame } from '@/lib/dialogs'
 import { useClock } from '@/lib/hooks'
 import { setSetting, useSetting } from '@/lib/settings'
 import { companies } from '@/lib/utils'
-import { focus, minimize, open, useWindows } from '@/lib/windows'
+import { focus, minimize, open, switchView, useWindows } from '@/lib/windows'
 
 type Entry = { label: string; icon: React.ReactNode; run?: () => void; href?: string; children?: Entry[] } | 'separator'
 
@@ -132,7 +132,7 @@ export function Taskbar({ compact, onFind, onShutdown }: Props) {
         {
           label: toDesk ? 'Sit at the 3D desk' : 'Back to the screen',
           icon: <ui.cube className="size-4" />,
-          run: () => setSetting('view', toDesk ? 'desk' : 'screen'),
+          run: () => switchView(toDesk ? 'desk' : 'screen'),
         },
       ],
     },
@@ -192,7 +192,7 @@ export function Taskbar({ compact, onFind, onShutdown }: Props) {
         <button
           type="button"
           title={toDesk ? 'Sit at the 3D desk' : 'Back to the screen'}
-          onClick={() => setSetting('view', toDesk ? 'desk' : 'screen')}
+          onClick={() => switchView(toDesk ? 'desk' : 'screen')}
           className="flex items-center gap-1"
         >
           <ui.cube className="size-[16px]" />

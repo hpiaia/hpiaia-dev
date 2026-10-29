@@ -1,3 +1,5 @@
+import type WebampType from 'webamp'
+
 import { getSetting, useSettings } from '@/lib/settings'
 import { PlayerState, type YouTubePlayer } from '@/lib/youtube'
 
@@ -12,7 +14,13 @@ export const bridge: {
   queued: { id: string; play: boolean } | null
   volume: number
   start: (() => void) | null
-} = { player: null, media: null, queued: null, volume: 75, start: null }
+  webamp: WebampType | null
+} = { player: null, media: null, queued: null, volume: 75, start: null, webamp: null }
+
+// Turning the 3D monitor off cuts the music with it
+export function pauseWinamp() {
+  bridge.webamp?.pause()
+}
 
 // The tray's speaker mutes Winamp along with the rest of the system sounds
 const applyMute = (player: YouTubePlayer, sound: 'on' | 'off') => (sound === 'off' ? player.mute() : player.unMute())

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 
 import { app, type AppKey } from '@/lib/apps'
+import { setSetting, type View } from '@/lib/settings'
 
 export type Rect = { x: number; y: number; w: number; h: number }
 export type Win = Rect & { key: AppKey; sub?: string; z: number; minimized: boolean; maximized: boolean }
@@ -76,6 +77,21 @@ export function open(key: AppKey, sub?: string, at?: Partial<Rect>) {
 
 export function closeAll() {
   commit({ windows: [], focused: null })
+}
+
+// The screen and the 3D desk each start with their own windows. The new desktop lays them out once it is
+// measured; a saved view arriving at load isn't a switch, so a direct link still opens its app
+let switched = false
+
+export function switchView(view: View) {
+  switched = true
+  setSetting('view', view)
+}
+
+export function takeSwitch() {
+  const was = switched
+  switched = false
+  return was
 }
 
 export function close(key: AppKey) {

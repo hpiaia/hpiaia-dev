@@ -10,7 +10,7 @@ const views = ['screen', 'desk'] as const
 
 type Appearance = (typeof appearances)[number]
 export type Wallpaper = (typeof wallpapers)[number]
-type View = (typeof views)[number]
+export type View = (typeof views)[number]
 
 type Settings = {
   appearance: Appearance

@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { type Group, type Mesh, MeshStandardMaterial, type PerspectiveCamera, Shape, type Texture } from 'three'
 
 import { Wall } from '@/components/3d/Wall'
+import { pauseWinamp } from '@/components/desktop/apps/winamp/media'
 import { useMobile, usePortrait } from '@/lib/hooks'
 import { buttonClick, powerOff, powerOn } from '@/lib/power'
 import { printedMaterial } from '@/lib/print'
@@ -304,8 +305,10 @@ export default function Scene({ children }: React.PropsWithChildren) {
       <PowerButton
         on={on}
         toggle={() => {
-          if (on) powerOff()
-          else powerOn()
+          if (on) {
+            powerOff()
+            pauseWinamp()
+          } else powerOn()
           setPower(on ? 'off' : 'on')
         }}
       />

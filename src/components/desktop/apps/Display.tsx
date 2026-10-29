@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Button, GroupBox, Sunken, Tabs } from '@/components/desktop/apps/shared'
 import { setSetting, useSetting, type Wallpaper } from '@/lib/settings'
 import { wallpaperNames } from '@/lib/settings-script'
-import { close } from '@/lib/windows'
+import { close, switchView } from '@/lib/windows'
 
 function Radio({ checked, onChange, children }: React.PropsWithChildren<{ checked: boolean; onChange: () => void }>) {
   return (
@@ -73,10 +73,10 @@ function Settings() {
   return (
     <>
       <GroupBox label="Where this computer lives">
-        <Radio checked={view === 'screen'} onChange={() => setSetting('view', 'screen')}>
+        <Radio checked={view === 'screen'} onChange={() => switchView('screen')}>
           Just the screen
         </Radio>
-        <Radio checked={view === 'desk'} onChange={() => setSetting('view', 'desk')}>
+        <Radio checked={view === 'desk'} onChange={() => switchView('desk')}>
           On a desk, in 3D
         </Radio>
       </GroupBox>

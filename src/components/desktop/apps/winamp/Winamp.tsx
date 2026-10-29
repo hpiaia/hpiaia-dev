@@ -92,6 +92,7 @@ export function Winamp({ win, compact }: { win: Win; compact: boolean }) {
       await instance.renderInto(stage.current)
       if (disposed) return instance.dispose()
       webamp.current = instance
+      bridge.webamp = instance
       instance.setCurrentTrack(sub.current ? firstTrack(sub.current) : defaultTrack)
     }
     void start()
@@ -99,6 +100,7 @@ export function Winamp({ win, compact }: { win: Win; compact: boolean }) {
     return () => {
       disposed = true
       webamp.current = null
+      bridge.webamp = null
       instance?.dispose()
       youtube?.destroy()
       bridge.player = null
