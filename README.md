@@ -27,7 +27,7 @@ the installed dependencies and pnpm cache. No secrets, backing services, or resu
 - **Desktop.** Icons, a taskbar with a Start menu, and windows you can drag, resize, minimize and maximize. ⌘K (or
   Start > Find) searches apps, jobs, albums, games and links, and F1 opens Help.
 - **Apps.** About (WordPad), Work (Explorer), Resume, Command Prompt, Skills, Say Hi, Media Player (SoundCloud),
-  Winamp, Help, Display Properties and the Recycle Bin.
+  Winamp, Help and Display Properties.
 - **Command Prompt.** A DOS-style shell on xterm.js that browses a small C: drive. DOS commands (`dir`, `type`, `cd..`,
   `cls`, `start`, `tree`, `ver`) and their unix counterparts (`ls`, `cat`, `cd`, `clear`, `open`, `pwd`) work on
   the same files. `help` lists everything.

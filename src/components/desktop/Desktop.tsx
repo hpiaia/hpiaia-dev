@@ -3,7 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import { AppView, windowTitle } from '@/components/desktop/apps'
-import { appIcons } from '@/components/desktop/icons'
+import { appIcons, CubeIcon } from '@/components/desktop/icons'
 import { Winamp } from '@/components/desktop/apps/winamp/Winamp'
 import { MessageBox } from '@/components/desktop/MessageBox'
 import { Search } from '@/components/desktop/Search'
@@ -15,12 +15,14 @@ import { app, type AppKey, apps, pathOf } from '@/lib/apps'
 import { launchGame } from '@/lib/dialogs'
 import { useKeyboardSounds } from '@/lib/hooks'
 import { documentTitle } from '@/lib/seo'
-import { open, setBounds, useWindows, type Win } from '@/lib/windows'
+import { getSetting, setSetting, useSetting } from '@/lib/settings'
+import { closeAll, open, setBounds, toggleMaximize, useWindows, type Win } from '@/lib/windows'
 
 type Props = { initial: { key: AppKey; sub?: string } }
 
 // Windows outlive a Desktop: switching between the screen and the 3D desk remounts it
 let started = false
+let shownView: string | undefined
 
 type Shortcut = { id: string; label: string; icon: React.ReactNode; href?: string; run: () => void }
 
@@ -42,15 +44,26 @@ const gameShortcuts: Shortcut[] = games.map((g) => ({
   run: () => launchGame(g),
 }))
 
-// Nothing is remembered between visits. The home page starts with About on top, the prompt
-// below it and Winamp off to the right; a direct link to an app opens just that app
-function boot(initial: Props['initial']) {
-  if (initial.key !== 'about' || initial.sub) return open(initial.key, initial.sub)
+// Each view starts with its own windows. The screen has About on top, the prompt below it and Winamp off to
+// the right; the monitor is small, so it shows just About, maximized
+function home() {
+  closeAll()
+  if (getSetting('view') === 'desk') {
+    open('about')
+    toggleMaximize('about')
+    return
+  }
   const { w, h } = useWindows.getState().bounds
   const at = (x: number, y: number) => ({ x: Math.round(w * x), y: Math.round(h * y) })
   open('winamp')
   open('terminal', undefined, { ...at(0.069, 0.444), w: 700, h: 400 })
   open('about', undefined, { ...at(0.209, 0.049), w: Math.round(w * 0.543), h: Math.round(h * 0.798) })
+}
+
+// Nothing is remembered between visits. A direct link to an app opens just that app
+function boot(initial: Props['initial']) {
+  if (initial.key !== 'about' || initial.sub) return open(initial.key, initial.sub)
+  home()
 }
 
 function DesktopIcon({
@@ -114,11 +127,31 @@ export function Desktop({ initial }: Props) {
   const [selected, setSelected] = useState<string | null>(null)
   const [off, setOff] = useState(false)
   const compact = bounds.w > 0 && bounds.w < 640
+  const view = useSetting('view')
+  const toDesk = view === 'screen'
+  const viewShortcut: Shortcut = {
+    id: 'view',
+    label: toDesk ? '3D' : 'Exit 3D',
+    icon: <CubeIcon className="size-10" />,
+    run: () => setSetting('view', toDesk ? 'desk' : 'screen'),
+  }
   useKeyboardSounds()
 
   useLayoutEffect(() => {
     const el = layer.current as HTMLDivElement
-    const measure = () => setBounds(el.clientWidth, el.clientHeight)
+    // Switching between the screen and the 3D desk swaps in that view's windows. Waits for a real size, since
+    // the screen layout is relative to it
+    let switched = started && shownView !== view
+    shownView = view
+    const measure = () => {
+      // drei detaches the monitor's desktop before unmounting it, and its 0x0 would squash the new view's windows
+      if (shownView !== view || el.clientWidth === 0) return
+      setBounds(el.clientWidth, el.clientHeight)
+      if (switched) {
+        switched = false
+        home()
+      }
+    }
     measure()
     if (!started) {
       started = true
@@ -127,7 +160,7 @@ export function Desktop({ initial }: Props) {
     const observer = new ResizeObserver(measure)
     observer.observe(el)
     return () => observer.disconnect()
-  }, [initial])
+  }, [initial, view])
 
   // Until the desktop is measured (on the server and during hydration) the requested window renders centered
   const booting = !started && windows.length === 0
@@ -216,7 +249,7 @@ export function Desktop({ initial }: Props) {
           className="flex h-full content-start items-start gap-1 p-1 @max-[639px]/desk:pointer-events-none @max-[639px]/desk:flex-wrap @max-[639px]/desk:[&_li]:pointer-events-auto"
           onPointerDown={(e) => e.target === e.currentTarget && setSelected(null)}
         >
-          {[appShortcuts, gameShortcuts].map((group, i) => (
+          {[[...appShortcuts, viewShortcut], gameShortcuts].map((group, i) => (
             <ul
               key={i}
               className={`flex h-full flex-col gap-1 @max-[639px]/desk:contents ${i === 0 ? 'flex-wrap content-start' : 'ml-auto flex-wrap-reverse content-start'}`}

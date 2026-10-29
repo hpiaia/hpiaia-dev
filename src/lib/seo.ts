@@ -26,7 +26,6 @@ const titles: Record<AppKey, string> = {
   winamp: 'Winamp',
   credits: 'About this site',
   display: 'Display settings',
-  trash: 'Recycle bin',
 }
 
 const descriptions: Record<AppKey, string> = {
@@ -46,7 +45,6 @@ const descriptions: Record<AppKey, string> = {
   winamp: `Winamp, playing the albums on ${site.name}'s bedroom wall: Kyuss, Alice in Chains, Radiohead, Deftones and Queens of the Stone Age.`,
   credits: `About hpiaia97, the retro desktop behind hpiaia.dev: how it was built and who made the 3D model, fonts and sounds.`,
   display: 'Display settings for the hpiaia97 desktop.',
-  trash: 'The hpiaia97 recycle bin.',
 }
 
 // Pages set their own openGraph, which replaces the layout's wholesale, so the shared parts live here
@@ -65,7 +63,7 @@ export const share = {
 export const ownHeading: AppKey[] = ['about', 'work']
 
 // Settings, toys and the pdf viewer: nothing a search result should land on (/resume.pdf is indexed instead of /cv)
-export const unindexed: AppKey[] = ['cv', 'terminal', 'music', 'winamp', 'display', 'trash']
+export const unindexed: AppKey[] = ['cv', 'terminal', 'music', 'winamp', 'display']
 
 export function pageTitle(key: AppKey, sub?: string) {
   const job = key === 'work' && findJob(sub)

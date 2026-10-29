@@ -1,5 +1,5 @@
 export type AppKey =
-  'about' | 'work' | 'cv' | 'terminal' | 'skills' | 'contact' | 'music' | 'winamp' | 'credits' | 'display' | 'trash'
+  'about' | 'work' | 'cv' | 'terminal' | 'skills' | 'contact' | 'music' | 'winamp' | 'credits' | 'display'
 
 export type App = {
   key: AppKey
@@ -20,7 +20,6 @@ export const apps: App[] = [
   { key: 'winamp', title: 'Winamp', label: 'Winamp', size: [680, 476], side: 'right' },
   { key: 'credits', title: 'About hpiaia97', label: 'Help', size: [500, 520], side: 'right' },
   { key: 'display', title: 'Display Properties', label: 'Display', size: [420, 520], side: 'right' },
-  { key: 'trash', title: 'Recycle Bin', label: 'Recycle Bin', size: [540, 380], side: 'right' },
 ]
 
 export const app = (key: AppKey) => apps.find((a) => a.key === key) as App

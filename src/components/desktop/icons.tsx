@@ -157,17 +157,14 @@ function Monitor({ className }: Props) {
   )
 }
 
-function Bin({ className }: Props) {
+export function CubeIcon({ className }: Props) {
   return (
-    <Icon className={className}>
-      <path d="M7.5 9.5h17l-2 19h-13z" fill="#c0c0c0" stroke="#000" />
-      {[11, 14, 17, 20].map((x) => (
-        <rect key={x} x={x} y="11" width="1" height="16" fill="#808080" />
-      ))}
-      <rect x="5.5" y="6.5" width="21" height="3" fill="#dfdfdf" stroke="#000" />
-      <rect x="13.5" y="4.5" width="5" height="2" fill="#808080" stroke="#000" />
-      <path d="M14 18l2-3 2 3h-1.5v2h-1v-2z" fill="#008000" />
-    </Icon>
+    <svg viewBox="0 0 32 32" className={className} aria-hidden>
+      <path d="M16 3.5 28.5 9.5v13L16 28.5 3.5 22.5v-13Z" fill="#c0c0c0" stroke="#000" />
+      <path d="M16 3.5 28.5 9.5 16 15.5 3.5 9.5Z" fill="#fff" />
+      <path d="M16 15.5 28.5 9.5v13L16 28.5Z" fill="#808080" />
+      <path d="M3.5 9.5 16 15.5l12.5-6M16 15.5v13M16 3.5 28.5 9.5v13L16 28.5 3.5 22.5v-13Z" fill="none" stroke="#000" />
+    </svg>
   )
 }
 
@@ -203,7 +200,6 @@ export const appIcons: Record<AppKey, (props: Props) => React.JSX.Element> = {
   winamp: Amp,
   credits: HelpBook,
   display: Monitor,
-  trash: Bin,
 }
 
 function Glyph({ className, children, box = '0 0 16 14' }: React.PropsWithChildren<Props & { box?: string }>) {

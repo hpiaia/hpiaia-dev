@@ -74,6 +74,10 @@ export function open(key: AppKey, sub?: string, at?: Partial<Rect>) {
   commit({ windows: [...state().windows, win], focused: key })
 }
 
+export function closeAll() {
+  commit({ windows: [], focused: null })
+}
+
 export function close(key: AppKey) {
   const windows = state().windows.filter((w) => w.key !== key)
   commit({ windows, focused: nextFocus(windows) })

@@ -10,7 +10,6 @@ import { Display } from '@/components/desktop/apps/Display'
 import { Music } from '@/components/desktop/apps/Music'
 import { Sunken } from '@/components/desktop/apps/shared'
 import { Skills } from '@/components/desktop/apps/Skills'
-import { Trash } from '@/components/desktop/apps/Trash'
 import { Work } from '@/components/desktop/apps/Work'
 import { findAlbum } from '@/content/albums'
 import { resume } from '@/content/resume'
@@ -54,7 +53,5 @@ export function AppView({ win, focused }: { win: Win; focused: boolean }) {
       return <Credits />
     case 'display':
       return <Display />
-    case 'trash':
-      return <Trash />
   }
 }
